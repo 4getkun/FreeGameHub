@@ -106,6 +106,48 @@ describe("P4 update runner", () => {
     expect(saved?.games.find(item => item.id === "epic:old-copy")?.status).toBe("ended");
   });
 
+  it("keeps RSS and notification history across a same-period GamerPower to Epic ID replacement", async () => {
+    const root = await tempRoot();
+    const gamesPath = join(root, "games.json");
+    const feedsDir = join(root, "feeds");
+    const statePath = join(root, "notified.json");
+    const oldSame = game({
+      id: "gamerpower:501", title: "Shared Game", titleEn: "Shared Game", source: "gamerpower",
+      startAt: "2026-11-07T00:00:00Z", endAt: "2026-11-20T23:59:00Z", endApprox: true
+    });
+    const oldNewPeriod = game({
+      id: "gamerpower:502", title: "Returning Game", titleEn: "Returning Game", source: "gamerpower",
+      startAt: "2026-11-07T00:00:00Z", endAt: "2026-11-20T23:59:00Z", endApprox: true
+    });
+    await writeGamesFile([oldSame, oldNewPeriod], gamesPath, now);
+    await writeRssFeeds([oldSame, oldNewPeriod], { outputDir: feedsDir, siteUrl: "https://site.example/" });
+    await writeFile(statePath, JSON.stringify({
+      "gamerpower:501@2026-11-07T00:00:00Z:new": ["test"],
+      "gamerpower:502@2026-11-07T00:00:00Z:new": ["test"]
+    }));
+    const send = vi.fn<Notifier["send"]>(async () => {});
+    const notifier = testNotifier(send);
+
+    await runUpdate({
+      now, gamesPath, feedsDir, statePath, siteUrl: "https://site.example/", env: {}, notifiers: [notifier],
+      fetchers: [fetcher("epic", [
+        fetched({ id: "epic:shared", title: "Shared Game", titleEn: "Shared Game", source: "epic", startAt: "2026-11-08T00:00:00Z", endAt: "2026-11-20T16:00:00Z" }),
+        fetched({ id: "epic:returning", title: "Returning Game", titleEn: "Returning Game", source: "epic", startAt: "2026-11-08T00:00:00Z", endAt: "2026-11-21T16:00:00Z" })
+      ]), fetcher("gamerpower", [])]
+    });
+
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(send).toHaveBeenCalledWith(expect.objectContaining({ id: "epic:returning" }), "new", expect.anything(), {});
+    const feed = await readFile(join(feedsDir, "all.xml"), "utf8");
+    expect((feed.match(/<item>/g) ?? [])).toHaveLength(3);
+    expect(feed).toContain("gamerpower:501@2026-11-07T00:00:00Z");
+    expect(feed).toContain("epic:returning@2026-11-08T00:00:00Z");
+    expect(feed).not.toContain("epic:shared@2026-11-08T00:00:00Z");
+    const state = JSON.parse(await readFile(statePath, "utf8"));
+    expect(state["epic:shared@2026-11-08T00:00:00Z:new"]).toEqual(["test"]);
+    expect(state).not.toHaveProperty("gamerpower:501@2026-11-07T00:00:00Z:new");
+  });
+
   it("rearms notifications for a changed promotion period on the same active Epic ID", async () => {
     const root = await tempRoot();
     const gamesPath = join(root, "games.json");

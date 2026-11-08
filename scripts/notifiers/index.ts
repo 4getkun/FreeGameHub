@@ -1,4 +1,5 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
+import { randomUUID } from "node:crypto";
 import { dirname, extname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import type { Game } from "../../src/shared/types";
@@ -48,7 +49,14 @@ export async function readNotifiedFile(filePath = DEFAULT_STATE_PATH): Promise<N
 export async function writeNotifiedFile(state: NotifiedFile, filePath = DEFAULT_STATE_PATH): Promise<void> {
   const target = resolve(filePath);
   await mkdir(dirname(target), { recursive: true });
-  await writeFile(target, `${JSON.stringify(state, null, 2)}\n`, "utf8");
+  const temporary = `${target}.${randomUUID()}.tmp`;
+  try {
+    await writeFile(temporary, `${JSON.stringify(state, null, 2)}\n`, "utf8");
+    await rename(temporary, target);
+  } catch (error) {
+    await rm(temporary, { force: true }).catch(() => {});
+    throw error;
+  }
 }
 
 function matchesFilters(game: Game, notifierName: string, env: NodeJS.ProcessEnv): boolean {
@@ -75,6 +83,10 @@ export async function runNotifications(
   options: { now?: Date; statePath?: string; notifiers?: Notifier[]; newlyActiveIds?: string[] } = {}
 ): Promise<{ initialized: boolean; attempts: number }> {
   const notifiers = options.notifiers ?? await loadNotifiers();
+  const enabledNotifiers = notifiers.filter(notifier => {
+    try { return notifier.isEnabled(env); } catch { return false; }
+  });
+  console.info(`[notifier] enabled channels: ${enabledNotifiers.length}`);
   const statePath = options.statePath ?? DEFAULT_STATE_PATH;
   const state = await readNotifiedFile(statePath);
   const now = options.now ?? new Date();
@@ -124,11 +136,8 @@ export async function runNotifications(
   for (const { game, kind } of ordered) {
       const key = notificationKey(game, kind);
       const sent = new Set(state[key] ?? []);
-      for (const notifier of notifiers) {
+      for (const notifier of enabledNotifiers) {
         if (sent.has(notifier.name) || !matchesFilters(game, notifier.name, env) || (counts.get(notifier.name) ?? 0) >= MAX_PER_CHANNEL) continue;
-        let enabled = false;
-        try { enabled = notifier.isEnabled(env); } catch { continue; }
-        if (!enabled) continue;
         counts.set(notifier.name, (counts.get(notifier.name) ?? 0) + 1);
         attempts++;
         try {

@@ -9,6 +9,14 @@ export function normalizeTitle(title: string): string {
     .replace(/\s+/gu, " ").trim();
 }
 
+/** Matches one Epic/GamerPower campaign across source-ID changes, but not a later period. */
+export function sameDistributionPeriod(left: FetchedGame, right: FetchedGame): boolean {
+  if (left.source === right.source || left.store !== right.store || left.type !== right.type || !matchTitle(left, right)) return false;
+  const sameStart = left.startAt !== null && left.startAt === right.startAt;
+  const sameEndDay = left.endAt !== null && right.endAt !== null && utcEndDate(left.endAt) === utcEndDate(right.endAt);
+  return sameStart || sameEndDay;
+}
+
 function utcEndDate(value: string): string {
   return new Date(value).toISOString().slice(0, 10);
 }

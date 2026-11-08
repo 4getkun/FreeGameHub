@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import * as slack from "../scripts/notifiers/slack";
 import * as telegram from "../scripts/notifiers/telegram";
 import * as bluesky from "../scripts/notifiers/bluesky";
+import { limitGraphemes } from "../scripts/notifiers/bluesky";
 import * as mastodon from "../scripts/notifiers/mastodon";
 import { loadNotifiers } from "../scripts/notifiers";
 import type { Game } from "../src/shared/types";
@@ -96,6 +97,34 @@ describe("P3c notifier channels", () => {
         thumb: { $type: "blob", ref: { $link: "bafkreiabc" }, mimeType: "image/png", size: 3 }
       }
     });
+  });
+
+  it("keeps long title and upcoming text within 300 graphemes without splitting a cluster", async () => {
+    const longGame = { ...game, title: `${"a".repeat(278)}👨‍👩‍👧‍👦${"b".repeat(80)}`, summaryJa: null, imageUrl: null };
+    const upcoming = { ...game, id: "epic:next", title: "次回配布".repeat(100), startAt: "2026-11-12T00:00:00Z", status: "upcoming" as const };
+    const request = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(okJson({ accessJwt: "access-secret", did: "did:plc:sample" }))
+      .mockResolvedValueOnce(okJson({ uri: "at://did:plc:sample/app.bsky.feed.post/record" }));
+    vi.stubGlobal("fetch", request);
+    await bluesky.send(longGame, "new", { upcoming: [upcoming] }, { BLUESKY_HANDLE: "bot", BLUESKY_APP_PASSWORD: "secret" });
+
+    const payload = JSON.parse(request.mock.calls[1][1]?.body as string);
+    const text = payload.record.text as string;
+    const graphemes = [...new Intl.Segmenter("ja-JP", { granularity: "grapheme" }).segment(text)].map(item => item.segment);
+    expect(graphemes.length).toBeLessThanOrEqual(300);
+    expect(graphemes.at(-1)).toBe("…");
+    expect(text).toContain("👨‍👩‍👧‍👦");
+    expect(payload.record.embed.$type).toBe("app.bsky.embed.external");
+    expect(payload.record.embed.external.uri).toBe(game.url);
+  });
+
+  it("truncates only at grapheme boundaries", () => {
+    const family = "👨‍👩‍👧‍👦";
+    const limited = limitGraphemes(`${"a".repeat(298)}${family}tail`, 300);
+    const clusters = [...new Intl.Segmenter("ja-JP", { granularity: "grapheme" }).segment(limited)].map(item => item.segment);
+    expect(clusters).toHaveLength(300);
+    expect(clusters[298]).toBe(family);
+    expect(clusters[299]).toBe("…");
   });
 
   it("sends Mastodon status with bearer authentication and public visibility", async () => {

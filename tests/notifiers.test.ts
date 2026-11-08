@@ -102,9 +102,11 @@ describe("notifier registry and delivery", () => {
     const statePath = join(await tempDir(), "notified.json");
     await writeFile(statePath, "{}\n");
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("fetch must not run"));
+    const info = vi.spyOn(console, "info").mockImplementation(() => {});
     const result = await runNotifications([game({ id: "steam:no-secret", store: "steam" })], contexts, {}, { statePath, now });
     expect(result.attempts).toBe(0);
     expect(fetchSpy).not.toHaveBeenCalled();
+    expect(info).toHaveBeenCalledWith("[notifier] enabled channels: 0");
   });
 
   it("skips channels without secrets and retries only the failed channel", async () => {

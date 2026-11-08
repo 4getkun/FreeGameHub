@@ -13,6 +13,18 @@ function serviceUrl(env: NodeJS.ProcessEnv): string {
   return (env.BLUESKY_SERVICE_URL || "https://bsky.social").replace(/\/+$/, "");
 }
 
+type Grapheme = { segment: string };
+type GraphemeSegmenter = { segment(input: string): Iterable<Grapheme> };
+const Segmenter = (Intl as unknown as {
+  Segmenter: new (locales: string, options: { granularity: "grapheme" }) => GraphemeSegmenter;
+}).Segmenter;
+
+export function limitGraphemes(text: string, limit: number): string {
+  if (limit <= 0) return "";
+  const graphemes = [...new Segmenter("ja-JP", { granularity: "grapheme" }).segment(text)].map(item => item.segment);
+  return graphemes.length <= limit ? text : `${graphemes.slice(0, Math.max(0, limit - 1)).join("")}…`;
+}
+
 async function createSession(base: string, env: NodeJS.ProcessEnv): Promise<Session> {
   let response: Response;
   try {
@@ -51,7 +63,7 @@ export async function send(game: Game, kind: NotificationKind, ctx: Notification
   const base = serviceUrl(env);
   const session = await createSession(base, env);
   const thumb = game.imageUrl ? await uploadThumbnail(base, session.accessJwt, game.imageUrl) : undefined;
-  const text = notificationText(game, kind, ctx);
+  const text = limitGraphemes(notificationText(game, kind, ctx), 300);
   const external = {
     uri: game.url,
     title: game.title,

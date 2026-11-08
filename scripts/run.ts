@@ -3,13 +3,14 @@ import { resolve } from "node:path";
 import { gamesFileSchema } from "../src/shared/schema";
 import type { Game, GamesFile } from "../src/shared/types";
 import { computeStatus } from "../src/shared/status";
-import { mergeGames, type FetchedGame } from "./merge";
+import { mergeGames, sameDistributionPeriod, type FetchedGame } from "./merge";
 import { enrich } from "./enrich";
 import { pruneExpiredGames, readGamesFile, writeGamesFile } from "./store";
 import { fetchGames as fetchEpicGames } from "./fetchers/epic";
 import { fetchGames as fetchGamerPowerGames } from "./fetchers/gamerpower";
 import { writeRssFeeds } from "./outputs/rss";
-import { runNotifications, type Notifier } from "./notifiers";
+import { readNotifiedFile, runNotifications, writeNotifiedFile, type Notifier } from "./notifiers";
+import { notificationKey } from "../src/shared/identity";
 
 const DEFAULT_SITE_URL = "https://github.com/4getkun/FreeGameHub";
 
@@ -96,11 +97,18 @@ export async function runUpdate(options: UpdateOptions = {}): Promise<UpdateResu
     ...endedHistory.filter(game => !mergedIds.has(game.id)).map(game => ({ ...game, status: computeStatus(game, now) }))
   ];
   const oldById = new Map((previous?.games ?? []).map(game => [game.id, game]));
+  const previousPeriodByNewId = new Map<string, Game>();
+  for (const game of withEndedHistory) {
+    if (oldById.has(game.id) || game.status !== "active") continue;
+    const previousPeriod = (previous?.games ?? []).find(old => old.status === "active" &&
+      sameDistributionPeriod(asFetched(old), asFetched(game)));
+    if (previousPeriod) previousPeriodByNewId.set(game.id, previousPeriod);
+  }
   const withPreviousSummaries = withEndedHistory.map(game => ({
     ...game,
-    summaryJa: oldById.get(game.id)?.summaryJa ?? null
+    summaryJa: oldById.get(game.id)?.summaryJa ?? previousPeriodByNewId.get(game.id)?.summaryJa ?? null
   }));
-  const newGames = withPreviousSummaries.filter(game => !oldById.has(game.id));
+  const newGames = withPreviousSummaries.filter(game => !oldById.has(game.id) && !previousPeriodByNewId.has(game.id));
   const enriched = await enrich(newGames, { max: 30, env });
   const enrichedById = new Map(enriched.map(game => [game.id, game]));
   const finalFile = gamesFileSchema.parse({ updatedAt: now.toISOString(), games: pruneExpiredGames(withPreviousSummaries.map(game => enrichedById.get(game.id) ?? game), now) });
@@ -116,8 +124,26 @@ export async function runUpdate(options: UpdateOptions = {}): Promise<UpdateResu
     const previousGame = previousById.get(game.id);
     return previousGame?.status === "active" && previousGame.startAt !== game.startAt;
   });
+  const samePeriodSourceSwitchIds = new Set(previousPeriodByNewId.keys());
   // Persist the RSS transition first: if that write fails, the old games.json status remains retryable.
-  await writeRssFeeds([...newlyActive, ...newlyPromoted], { outputDir: feedsDir, siteUrl });
+  await writeRssFeeds([...newlyActive, ...newlyPromoted].filter(game => !samePeriodSourceSwitchIds.has(game.id)), { outputDir: feedsDir, siteUrl });
+  const notified = await readNotifiedFile(statePath);
+  if (notified && previousPeriodByNewId.size) {
+    for (const [newId, old] of previousPeriodByNewId) {
+      const current = finalFile.games.find(game => game.id === newId);
+      if (!current) continue;
+      for (const kind of ["new", "ending-soon"] as const) {
+        const oldKey = notificationKey(old, kind);
+        const newKey = notificationKey(current, kind);
+        const previousChannels = notified[oldKey];
+        if (previousChannels) {
+          notified[newKey] = [...new Set([...(notified[newKey] ?? []), ...previousChannels])];
+          delete notified[oldKey];
+        }
+      }
+    }
+    await writeNotifiedFile(notified, statePath);
+  }
   if (dataChanged) await writeGamesFile(finalFile.games, gamesPath, now);
   await runNotifications(finalFile.games, {
     upcoming: finalFile.games.filter(game => game.status === "upcoming")
