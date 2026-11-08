@@ -240,6 +240,20 @@ describe("P4 update runner", () => {
     expect(network).not.toHaveBeenCalled();
   });
 
+  it("enriches newly added games only", async () => {
+    const root = await tempRoot();
+    const gamesPath = join(root, "games.json");
+    await writeGamesFile([game({id:"epic:existing",descriptionOrig:"Existing description"})], gamesPath, now);
+    await writeFile(join(root, "notified.json"), "{}\n");
+    const network = vi.fn().mockResolvedValue({ok:true,json:async()=>({choices:[{message:{content:"新しいゲーム"}}]})});
+    vi.stubGlobal("fetch", network);
+    await runUpdate({now,gamesPath,feedsDir:join(root,"feeds"),statePath:join(root,"notified.json"),env:{GROQ_API_KEY:"test",GROQ_MODEL:"test"},notifiers:[],fetchers:[fetcher("epic",[fetched({id:"epic:existing",descriptionOrig:"Existing description"}),fetched({id:"epic:new",title:"New",titleEn:"New",descriptionOrig:"New description"})]),fetcher("gamerpower",[])]});
+    expect(network).toHaveBeenCalledTimes(1);
+    const saved = await readGamesFile(gamesPath);
+    expect(saved?.games.find(item=>item.id === "epic:existing")?.summaryJa).toBeNull();
+    expect(saved?.games.find(item=>item.id === "epic:new")?.summaryJa).toBe("新しいゲーム");
+  });
+
   it("runs four daily schedules and commits only when staged public data differs", async () => {
     const workflow = await readFile(resolveWorkflow(), "utf8");
     expect(workflow).toContain('cron: "0 0,6,12,18 * * *"');

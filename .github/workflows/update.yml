@@ -35,6 +35,8 @@ jobs:
       - name: Fetch, merge, notify, and write feeds
         run: npm run update
         env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GROQ_MODEL: ${{ vars.GROQ_MODEL }}
           RSS_SITE_URL: ${{ vars.RSS_SITE_URL || format('https://github.com/{0}', github.repository) }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           DISCORD_ROLE_ID: ${{ secrets.DISCORD_ROLE_ID }}

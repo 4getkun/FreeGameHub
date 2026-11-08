@@ -4,6 +4,7 @@ import { gamesFileSchema } from "../src/shared/schema";
 import type { Game, GamesFile } from "../src/shared/types";
 import { computeStatus } from "../src/shared/status";
 import { mergeGames, type FetchedGame } from "./merge";
+import { enrich } from "./enrich";
 import { pruneExpiredGames, readGamesFile, writeGamesFile } from "./store";
 import { fetchGames as fetchEpicGames } from "./fetchers/epic";
 import { fetchGames as fetchGamerPowerGames } from "./fetchers/gamerpower";
@@ -99,7 +100,10 @@ export async function runUpdate(options: UpdateOptions = {}): Promise<UpdateResu
     ...game,
     summaryJa: oldById.get(game.id)?.summaryJa ?? null
   }));
-  const finalFile = gamesFileSchema.parse({ updatedAt: now.toISOString(), games: pruneExpiredGames(withPreviousSummaries, now) });
+  const newGames = withPreviousSummaries.filter(game => !oldById.has(game.id));
+  const enriched = await enrich(newGames, { max: 30, env });
+  const enrichedById = new Map(enriched.map(game => [game.id, game]));
+  const finalFile = gamesFileSchema.parse({ updatedAt: now.toISOString(), games: pruneExpiredGames(withPreviousSummaries.map(game => enrichedById.get(game.id) ?? game), now) });
   const dataChanged = !previous || !sameGames(previous.games, finalFile.games);
 
   const activeGames = finalFile.games.filter(game => game.status === "active");
