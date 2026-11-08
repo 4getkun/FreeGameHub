@@ -26,10 +26,10 @@ export function render(root: HTMLElement, games: Game[], state: UiState, now = n
     const group = element("section", "game-section"); group.dataset.section = section.status;
     group.append(element("h2", "game-section__title", section.title)); const list = element("div", "game-section__games");
     const ordered = section.status === "ending" ? orderByEndAt(buckets.get(section.status)!) : buckets.get(section.status)!;
-    for (const game of ordered) {
+    for (const [index, game] of ordered.entries()) {
       const imageUrl = cardImageUrl(game);
       if (imageUrl && imageIndex === 0) updateHeroPreconnect(imageUrl);
-      list.append(makeCard(game, claimed.has(game.id), section.status, formatEnd(game, now), imageUrl, imageIndex));
+      list.append(makeCard(game, claimed.has(game.id), section.status, formatEnd(game, now), imageUrl, imageIndex, index === 0));
       if (imageUrl) imageIndex++;
     }
     if (!ordered.length) list.append(element("p", "game-section__empty", emptyMessage(section.status)));

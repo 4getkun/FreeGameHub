@@ -1,6 +1,7 @@
 import type { Game, Status } from "../shared/types";
 import type { UiState } from "./state";
 import { formatStart } from "./start-time";
+import { imageSizes, originalImageFallback, resizeEpicImage } from "./image-resize";
 
 export type CardState = Status | "ending";
 export const sections: Array<{ status: CardState; title: string }> = [
@@ -11,12 +12,29 @@ export function element<K extends keyof HTMLElementTagNameMap>(tag: K, role: str
   const node = document.createElement(tag); node.className = role; if (text !== undefined) node.textContent = text; return node;
 }
 export function cardImageUrl(game: Game): string | null { return game.imageUrl ? safeHttpUrl(game.imageUrl) : null; }
-export function makeCard(game: Game, claimed: boolean, status: CardState, end: { text: string; countdown: string | null; imminent: boolean }, imageUrl: string | null, imageIndex: number): HTMLElement {
+export function makeCard(game: Game, claimed: boolean, status: CardState, end: { text: string; countdown: string | null; imminent: boolean }, imageUrl: string | null, imageIndex: number, firstCard: boolean): HTMLElement {
   const card = element("article", "game-card"); card.dataset.state = status; card.dataset.claimed = String(claimed); card.dataset.approx = String(game.endApprox);
   const title = element("h3", "game-card__title");
   const url = safeHttpUrl(game.url);
   if (url) { const link = element("a", "game-card__link", game.title); link.href = url; link.rel = "noopener noreferrer"; title.append(link); } else title.textContent = game.title;
-  if (imageUrl) { const img = element("img", "game-card__image"); img.alt = ""; img.loading = imageIndex < 3 ? "eager" : "lazy"; if (imageIndex === 0) img.setAttribute("fetchpriority", "high"); img.width = 1280; img.height = 720; img.src = imageUrl; card.append(img); }
+  if (imageUrl) {
+    const img = element("img", "game-card__image"); img.alt = ""; img.loading = imageIndex < 3 ? "eager" : "lazy";
+    if (imageIndex === 0) img.setAttribute("fetchpriority", "high");
+    img.width = 1280; img.height = 720;
+    const resized = game.imageUrl ? resizeEpicImage(game.imageUrl) : null;
+    if (resized) {
+      let retried = false;
+      img.onerror = () => {
+        const fallback = originalImageFallback(resized.original, retried);
+        if (!fallback) return;
+        retried = true; img.removeAttribute("srcset"); img.removeAttribute("sizes"); img.src = fallback;
+      };
+      img.sizes = imageSizes(status, firstCard);
+      img.srcset = imageIndex === 0 ? `${resized.small} 640w, ${resized.hero} 960w` : `${resized.small} 640w`;
+      img.src = imageIndex === 0 ? resized.hero : resized.small;
+    } else img.src = imageUrl;
+    card.append(img);
+  }
   card.append(title, element("p", "game-card__store", game.store), element("p", "game-card__type", typeLabel(game.type)), element("p", "game-card__end", end.text));
   if (status === "upcoming") card.append(element("p", "game-card__start", formatStart(game.startAt)));
   if (end.imminent) card.append(element("p", "game-card__imminent", "まもなく"));

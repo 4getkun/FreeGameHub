@@ -9,9 +9,11 @@ import { createDeviceFixture } from './fixture';
 import { measureDevicePerformance } from './performance';
 import { assertSmokeResult } from './smoke';
 import { testRootFontScaling } from './text-scale';
+import { isUnsupportedDeviceScreenshot } from './lighthouse-warning';
 import type { RecoveryState } from './watchdog';
 
-type Result = { name: string; status: 'pass' | 'fail' | 'skip'; detail: string };
+type Result = { name: string; status: 'pass' | 'fail' | 'skip' | 'warning'; detail: string };
+class DeviceWarning extends Error {}
 const smoke = process.argv.includes('--smoke');
 const output = resolve('device-report');
 const site = join(output, 'site');
@@ -48,7 +50,7 @@ function restore(): void {
 }
 async function check(name: string, fn: () => Promise<string>): Promise<void> {
   try { if (interrupted) throw new Error('中断されました'); record(name, 'pass', await fn()); }
-  catch (error) { record(name, 'fail', error instanceof Error ? error.message : String(error)); }
+  catch (error) { record(name, error instanceof DeviceWarning ? 'warning' : 'fail', error instanceof Error ? error.message : String(error)); }
 }
 function assert(value: unknown, message: string): asserts value { if (!value) throw new Error(message); }
 async function waitServer(): Promise<void> {
@@ -350,6 +352,7 @@ async function full(p: Page, errors: string[], failed: string[]): Promise<void> 
     writeFileSync(join(output, 'lighthouse.json'), JSON.stringify(run.lhr, null, 2));
     const lhr = run.lhr;
     const metrics = { scores: Object.fromEntries(Object.entries(lhr.categories).map(([k, v]) => [k, v?.score])), lcp: lhr.audits['largest-contentful-paint']?.numericValue, cls: lhr.audits['cumulative-layout-shift']?.numericValue, tbt: lhr.audits['total-blocking-time']?.numericValue, speedIndexError: lhr.audits['speed-index']?.errorMessage };
+    if (isUnsupportedDeviceScreenshot(metrics.scores.performance, metrics.speedIndexError)) throw new DeviceWarning(`NO_SCREENSHOTS: 実機では算出不可・エミュレーション値で代替。${JSON.stringify(metrics)}`);
     assert(metrics.scores.performance !== null, `Performance を算出できません: ${JSON.stringify(metrics)}`);
     return JSON.stringify(metrics);
   });
