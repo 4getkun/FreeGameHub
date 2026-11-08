@@ -1,0 +1,2 @@
+ :root { --color-surface: 255 255 255; --color-text: 0 0 0; }
+@media (prefers-color-scheme: dark) { :root { --color-surface: 0 0 0; --color-text: 255 255 255; } }
