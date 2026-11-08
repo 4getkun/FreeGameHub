@@ -109,3 +109,8 @@ body { @apply bg-bg font-japan text-text antialiased; }
 
 .game-card__start { @apply px-4 pt-2 font-space-grotesk text-[13px] font-semibold tabular-nums text-dim; }
 @media (min-width: 768px) { .game-section[data-section="upcoming"] .game-card__start { @apply col-start-2 pt-1; } }
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .game-card:is([data-state="active"], [data-state="ending"]) .game-card__claimed-label {
+    @apply mr-4 mb-12;
+  }
+}
