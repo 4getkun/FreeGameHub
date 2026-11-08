@@ -1,0 +1,956 @@
+{
+  "epic:a9748abde1c94b66aae5250bb9fc5503@2026-11-05T16:00:00.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "epic:3be0a0d8479946d78f60d90c9442a0b4@2026-11-05T16:00:00.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3847@2026-11-05T18:47:43.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3846@2026-11-05T11:16:51.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3844@2026-11-05T11:03:51.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3842@2026-11-01T18:26:45.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3841@2026-11-01T18:07:30.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3840@2026-11-01T16:41:36.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3839@2026-11-01T09:30:50.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3838@2026-10-31T15:28:12.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3837@2026-10-31T15:23:28.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:1546@2026-10-30T14:26:20.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3346@2026-10-30T13:33:46.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3831@2026-10-29T09:52:14.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3830@2026-10-28T17:11:01.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3340@2026-10-26T11:04:23.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3331@2026-10-19T11:58:10.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3814@2026-10-14T14:05:34.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3803@2026-10-06T10:44:38.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3802@2026-10-05T14:55:52.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3793@2026-09-29T08:20:56.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3328@2026-09-25T13:41:01.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3789@2026-09-23T13:46:52.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3785@2026-09-21T12:46:10.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3322@2026-09-19T09:15:50.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3324@2026-09-02T09:51:31.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3316@2026-08-26T07:55:48.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3728@2026-08-03T09:35:39.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3719@2026-07-17T09:28:17.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3718@2026-07-17T09:23:38.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3716@2026-07-16T13:15:06.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3704@2026-07-06T13:58:53.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3691@2026-06-23T12:28:17.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3675@2026-06-08T15:28:34.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3656@2026-05-27T12:27:07.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3624@2026-05-05T13:07:38.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:1920@2026-04-26T13:53:01.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3592@2026-04-17T11:51:50.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3584@2026-04-16T12:40:13.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3582@2026-04-16T12:32:43.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3568@2026-04-06T20:16:09.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3513@2026-03-03T12:22:02.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3508@2026-02-25T12:08:14.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3488@2026-02-10T15:17:23.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3489@2026-02-10T15:16:57.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3486@2026-02-06T12:32:46.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3482@2026-02-03T12:05:55.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3475@2026-01-29T12:17:19.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3446@2026-01-01T08:53:18.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3408@2025-12-15T20:42:13.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3398@2025-12-09T21:37:18.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3373@2025-11-18T12:53:02.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3321@2025-10-10T08:49:32.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3145@2025-09-26T09:20:41.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3293@2025-09-23T14:42:19.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3251@2025-08-12T03:27:37.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:2856@2025-06-28T01:57:48.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3144@2025-05-01T13:01:57.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3112@2025-03-21T14:01:44.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:3086@2025-02-19T08:26:40.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:2965@2024-10-15T09:23:18.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:2823@2024-08-07T19:25:54.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:2875@2024-06-17T12:03:27.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:2871@2024-06-10T12:42:41.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:2835@2024-04-29T14:30:44.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:2817@2024-03-25T13:18:42.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:2734@2024-01-08T13:16:31.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:2733@2024-01-08T13:07:36.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:2394@2023-12-27T13:42:18.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:2646@2023-11-10T03:19:49.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:2527@2023-09-02T17:57:00.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:2509@2023-08-25T06:40:20.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:2485@2023-08-16T14:26:45.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:2456@2023-07-20T12:33:37.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:2447@2023-07-18T12:24:45.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:2409@2023-06-13T15:55:06.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:2341@2023-05-03T09:53:53.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:2318@2023-04-07T16:53:39.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:2204@2023-01-17T20:26:51.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:1890@2022-09-04T17:55:56.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:1812@2022-08-15T20:06:12.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:1599@2022-07-22T22:21:45.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:1531@2022-06-10T22:05:23.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:1498@2022-05-13T19:30:02.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:1268@2021-11-23T22:23:54.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:1266@2021-11-23T21:52:29.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:1262@2021-11-18T22:30:24.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:1231@2021-11-11T19:27:41.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:1130@2021-09-21T19:35:46.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:1106@2021-09-13T16:29:17.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:988@2021-07-09T19:12:05.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:868@2021-05-10T18:17:33.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:785@2021-03-28T15:49:50.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:14@2021-01-30T07:00:00.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:555@2020-11-24T18:11:22.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:457@2020-10-19T09:19:29.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:383@2020-09-21T20:16:42.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:157@2020-06-24T09:54:34.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:40@2020-02-21T15:40:01.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:16@2020-01-21T12:42:08.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:152@2020-01-01T00:00:00.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:42@2019-12-21T16:03:53.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:9@2018-05-20T21:32:55.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:7@2018-05-20T17:42:36.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:6@2018-05-20T17:18:02.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "gamerpower:5@2018-05-20T17:00:48.000Z:new": [
+    "bluesky",
+    "discord",
+    "mastodon",
+    "ntfy",
+    "slack",
+    "telegram",
+    "webhook"
+  ]
+}
