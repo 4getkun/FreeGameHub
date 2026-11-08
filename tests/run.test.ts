@@ -106,6 +106,43 @@ describe("P4 update runner", () => {
     expect(saved?.games.find(item => item.id === "epic:old-copy")?.status).toBe("ended");
   });
 
+  it("rearms notifications for a changed promotion period on the same active Epic ID", async () => {
+    const root = await tempRoot();
+    const gamesPath = join(root, "games.json");
+    const feedsDir = join(root, "feeds");
+    const statePath = join(root, "notified.json");
+    const recurring = game({ id: "epic:recurring", title: "Recurring", status: "active", startAt: "2026-11-01T00:00:00Z" });
+    await writeGamesFile([recurring], gamesPath, now);
+    await writeFile(statePath, JSON.stringify({ "epic:recurring:new": ["test", "healthy"], "epic:recurring:ending-soon": ["test", "healthy"] }));
+    const send = vi.fn<Notifier["send"]>().mockRejectedValueOnce(new Error("offline")).mockResolvedValue(undefined);
+    const healthySend = vi.fn<Notifier["send"]>(async () => {});
+    const notifiers = [testNotifier(send), { ...testNotifier(healthySend), name: "healthy" }];
+    let startAt = "2026-11-01T00:00:00Z";
+    const run = () => runUpdate({
+      now, gamesPath, feedsDir, statePath, siteUrl: "https://site.example/", env: {}, notifiers,
+      fetchers: [fetcher("epic", [fetched({ id: "epic:recurring", title: "Recurring", startAt, endAt: "2026-11-20T00:00:00Z" })]), fetcher("gamerpower", [])]
+    });
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    await run();
+    expect(send).not.toHaveBeenCalled();
+    expect(healthySend).not.toHaveBeenCalled();
+    startAt = "2026-11-08T00:00:00Z";
+    await run();
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(healthySend).toHaveBeenCalledTimes(1);
+    expect(JSON.parse(await readFile(statePath, "utf8"))["epic:recurring:new"]).toEqual(["healthy"]);
+    expect(JSON.parse(await readFile(statePath, "utf8"))).not.toHaveProperty("epic:recurring:ending-soon");
+    await run();
+    expect(send).toHaveBeenCalledTimes(2);
+    expect(healthySend).toHaveBeenCalledTimes(1);
+    expect(JSON.parse(await readFile(statePath, "utf8"))["epic:recurring:new"]).toEqual(["healthy", "test"]);
+    await run();
+    expect(send).toHaveBeenCalledTimes(2);
+    expect(healthySend).toHaveBeenCalledTimes(1);
+    expect(log).toHaveBeenCalledTimes(1);
+  });
+
   it("keeps a new active transition pending if RSS persistence fails, then writes it on retry", async () => {
     const root = await tempRoot();
     const gamesPath = join(root, "games.json");
@@ -207,6 +244,9 @@ describe("P4 update runner", () => {
     const workflow = await readFile(resolveWorkflow(), "utf8");
     expect(workflow).toContain('cron: "0 0,6,12,18 * * *"');
     expect(workflow).toMatch(/workflow_dispatch:/);
+    expect(workflow).toContain("if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)");
+    expect(workflow).toContain("environment: production");
+    expect(workflow).toContain("ref: ${{ github.event.repository.default_branch }}");
     const noChange = workflow.indexOf("if git diff --cached --quiet -- public; then");
     const noCommit = workflow.indexOf("No public data changes");
     const commitElse = workflow.indexOf("else", noChange);

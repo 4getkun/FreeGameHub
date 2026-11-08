@@ -159,4 +159,19 @@ describe("notifier registry and delivery", () => {
     const state = JSON.parse(await readFile(statePath, "utf8"));
     expect(Object.keys(state)).toHaveLength(10);
   });
+
+  it("rotates failed candidates without exceeding ten attempts per channel", async () => {
+    const statePath = join(await tempDir(), "notified.json");
+    await writeFile(statePath, "{}\n");
+    const send = vi.fn<Notifier["send"]>(async (item) => { if (item.id !== "steam:10") throw new Error("offline"); });
+    const notifier = channel("test", send);
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const games = Array.from({ length: 20 }, (_, i) => game({ id: `steam:${i}`, store: "steam" }));
+    const first = await runNotifications(games, contexts, {}, { statePath, now, notifiers: [notifier] });
+    const second = await runNotifications(games, contexts, {}, { statePath, now: new Date(now.getTime() + 6 * 60 * 60 * 1000), notifiers: [notifier] });
+    expect(first.attempts).toBe(10);
+    expect(second.attempts).toBe(10);
+    expect(send).toHaveBeenCalledTimes(20);
+    expect((await readNotifiedFile(statePath))?.["steam:10:new"]).toEqual(["test"]);
+  });
 });

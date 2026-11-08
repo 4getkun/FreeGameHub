@@ -108,12 +108,16 @@ export async function runUpdate(options: UpdateOptions = {}): Promise<UpdateResu
   const newlyActive = activeGames.filter(game => previous
     ? previousById.get(game.id)?.status !== "active"
     : true);
+  const newlyPromoted = activeGames.filter(game => {
+    const previousGame = previousById.get(game.id);
+    return previousGame?.status === "active" && previousGame.startAt !== game.startAt;
+  });
   // Persist the RSS transition first: if that write fails, the old games.json status remains retryable.
   await writeRssFeeds(newlyActive, { outputDir: feedsDir, siteUrl });
   if (dataChanged) await writeGamesFile(finalFile.games, gamesPath, now);
   await runNotifications(finalFile.games, {
     upcoming: finalFile.games.filter(game => game.status === "upcoming")
-  }, env, { now, statePath, notifiers: options.notifiers });
+  }, env, { now, statePath, notifiers: options.notifiers, newlyActiveIds: [...newlyActive, ...newlyPromoted].map(game => game.id) });
 
   return {
     updated: dataChanged,

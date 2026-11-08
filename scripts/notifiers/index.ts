@@ -71,7 +71,7 @@ export async function runNotifications(
   games: Game[],
   ctx: NotifyContext,
   env: NodeJS.ProcessEnv = process.env,
-  options: { now?: Date; statePath?: string; notifiers?: Notifier[] } = {}
+  options: { now?: Date; statePath?: string; notifiers?: Notifier[]; newlyActiveIds?: string[] } = {}
 ): Promise<{ initialized: boolean; attempts: number }> {
   const notifiers = options.notifiers ?? await loadNotifiers();
   const statePath = options.statePath ?? DEFAULT_STATE_PATH;
@@ -89,11 +89,22 @@ export async function runNotifications(
     return { initialized: true, attempts: 0 };
   }
 
+  // Recurring offers may reuse an ID; a new active transition starts a fresh cycle.
+  for (const id of options.newlyActiveIds ?? []) {
+    delete state[`${id}:new`];
+    delete state[`${id}:ending-soon`];
+  }
+
   let attempts = 0;
   const counts = new Map<string, number>();
-  for (const kind of ["new", "ending-soon"] as const) {
-    for (const game of games) {
-      if (!shouldNotify(game, kind, now)) continue;
+  const candidates = (["new", "ending-soon"] as const).flatMap(kind =>
+    games.filter(game => shouldNotify(game, kind, now)).map(game => ({ game, kind }))
+  );
+  // Rotate eligible work every scheduled interval so repeated failures cannot
+  // indefinitely prevent later entries from being attempted.
+  const offset = candidates.length ? (Math.floor(now.getTime() / (6 * 60 * 60 * 1000)) * MAX_PER_CHANNEL) % candidates.length : 0;
+  const ordered = candidates.slice(offset).concat(candidates.slice(0, offset));
+  for (const { game, kind } of ordered) {
       const key = `${game.id}:${kind}`;
       const sent = new Set(state[key] ?? []);
       for (const notifier of notifiers) {
@@ -112,7 +123,6 @@ export async function runNotifications(
           console.error(`[notifier] ${notifier.name} send failed for ${kind} ${game.id}`);
         }
       }
-    }
   }
   await writeNotifiedFile(state, statePath);
   return { initialized: false, attempts };
