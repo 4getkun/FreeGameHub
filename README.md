@@ -15,6 +15,8 @@ Pages はコミットを受けてビルドし、`dist` の内容を公開しま�
 
 `.github/workflows/update.yml` は UTC の `0, 6, 12, 18` 時（1日4回）の定期実行と `workflow_dispatch` による手動実行を定義しています。`Actions` タブで **Update FreeGameHub data** を選び、既定ブランチに対して **Run workflow** を実行します。ジョブは既定ブランチ以外では動かず、更新があった場合だけ `public/` の変更をコミットして push します。差分がなければコミットしません。
 
+`.github/workflows/ci.yml` は PR と `main` への push で型チェック・テスト・ビルド・依存関係監査を実行します。Android 実機テストは CI の対象外です。
+
 P4 の手動実行は確認済みです。更新を [run 42482039934](https://github.com/4getkun/FreeGameHub/actions/runs/42482039934)、差分なし時のコミット省略を [run 42482090574](https://github.com/4getkun/FreeGameHub/actions/runs/42482090574) で確認しました。workflow の `environment: production` は設定されていますが、現在の private リポジトリ／GitHub Free で Environment の保護・Secrets が利用でき、強制されるかは未確認です。GitHub の公式仕様では private リポジトリの Environment secrets 利用に Pro、Team または Enterprise が必要とされています。将来登録する Secrets は `production` Environment 用とし、リポジトリ Secrets には登録しないでください。利用可否が確認できるまで秘密値を登録しないでください。[Workflow の手動実行](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-running-a-workflow) · [Environments の利用条件](https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments) · [Environment secrets](https://docs.github.com/en/actions/concepts/security/secrets)
 
 ## Secrets を登録する前のチェックリスト
