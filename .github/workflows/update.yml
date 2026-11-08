@@ -1,0 +1,79 @@
+name: Update FreeGameHub data
+
+'on':
+  schedule:
+    - cron: "0 0,6,12,18 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: freegamehub-data-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fetch, merge, notify, and write feeds
+        run: npm run update
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GROQ_MODEL: ${{ vars.GROQ_MODEL }}
+          RSS_SITE_URL: ${{ vars.RSS_SITE_URL || format('https://github.com/{0}', github.repository) }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_ROLE_ID: ${{ secrets.DISCORD_ROLE_ID }}
+          DISCORD_STORES: ${{ vars.DISCORD_STORES }}
+          DISCORD_TYPES: ${{ vars.DISCORD_TYPES }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          NTFY_SERVER: ${{ vars.NTFY_SERVER }}
+          NTFY_STORES: ${{ vars.NTFY_STORES }}
+          NTFY_TYPES: ${{ vars.NTFY_TYPES }}
+          GENERIC_WEBHOOK_URL: ${{ secrets.GENERIC_WEBHOOK_URL }}
+          WEBHOOK_STORES: ${{ vars.WEBHOOK_STORES }}
+          WEBHOOK_TYPES: ${{ vars.WEBHOOK_TYPES }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_STORES: ${{ vars.SLACK_STORES }}
+          SLACK_TYPES: ${{ vars.SLACK_TYPES }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_STORES: ${{ vars.TELEGRAM_STORES }}
+          TELEGRAM_TYPES: ${{ vars.TELEGRAM_TYPES }}
+          BLUESKY_HANDLE: ${{ secrets.BLUESKY_HANDLE }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+          BLUESKY_SERVICE_URL: ${{ vars.BLUESKY_SERVICE_URL }}
+          BLUESKY_STORES: ${{ vars.BLUESKY_STORES }}
+          BLUESKY_TYPES: ${{ vars.BLUESKY_TYPES }}
+          MASTODON_BASE_URL: ${{ vars.MASTODON_BASE_URL }}
+          MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
+          MASTODON_STORES: ${{ vars.MASTODON_STORES }}
+          MASTODON_TYPES: ${{ vars.MASTODON_TYPES }}
+
+      - name: Commit and push public data only when it changed
+        id: commit
+        shell: bash
+        run: |
+          git add public
+          if git diff --cached --quiet -- public; then
+            echo "No public data changes; skipping commit."
+          else
+            git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "chore: update free game data"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
