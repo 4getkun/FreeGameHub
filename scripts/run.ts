@@ -85,15 +85,22 @@ export async function runUpdate(options: UpdateOptions = {}): Promise<UpdateResu
   const incomingIds = new Set(incoming.map(game => game.id));
   // Keep absent tracked offers from every source; status is recalculated and store prunes ended items after 30 days.
   const retained = (previous?.games ?? []).filter(game => !incomingIds.has(game.id));
-  const merged = mergeGames([...retained.map(asFetched), ...incoming], now);
+  // Ended history is archival: do not let an old same-title offer absorb a new distribution in mergeGames.
+  const endedHistory = retained.filter(game => computeStatus(game, now) === "ended");
+  const liveRetained = retained.filter(game => computeStatus(game, now) !== "ended");
+  const merged = mergeGames([...liveRetained.map(asFetched), ...incoming], now);
+  const mergedIds = new Set(merged.map(game => game.id));
+  const withEndedHistory = [
+    ...merged,
+    ...endedHistory.filter(game => !mergedIds.has(game.id)).map(game => ({ ...game, status: computeStatus(game, now) }))
+  ];
   const oldById = new Map((previous?.games ?? []).map(game => [game.id, game]));
-  const withPreviousSummaries = merged.map(game => ({
+  const withPreviousSummaries = withEndedHistory.map(game => ({
     ...game,
     summaryJa: oldById.get(game.id)?.summaryJa ?? null
   }));
   const finalFile = gamesFileSchema.parse({ updatedAt: now.toISOString(), games: pruneExpiredGames(withPreviousSummaries, now) });
   const dataChanged = !previous || !sameGames(previous.games, finalFile.games);
-  if (dataChanged) await writeGamesFile(finalFile.games, gamesPath, now);
 
   const activeGames = finalFile.games.filter(game => game.status === "active");
   const previousById = new Map((previous?.games ?? []).map(game => [game.id, game]));
@@ -101,7 +108,9 @@ export async function runUpdate(options: UpdateOptions = {}): Promise<UpdateResu
   const newlyActive = activeGames.filter(game => previous
     ? previousById.get(game.id)?.status !== "active"
     : true);
+  // Persist the RSS transition first: if that write fails, the old games.json status remains retryable.
   await writeRssFeeds(newlyActive, { outputDir: feedsDir, siteUrl });
+  if (dataChanged) await writeGamesFile(finalFile.games, gamesPath, now);
   await runNotifications(finalFile.games, {
     upcoming: finalFile.games.filter(game => game.status === "upcoming")
   }, env, { now, statePath, notifiers: options.notifiers });

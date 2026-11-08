@@ -89,6 +89,46 @@ describe("P4 update runner", () => {
     expect(saved?.games.map(item => item.id).sort()).toEqual(["epic:missing", "epic:new", "epic:recent-ended", "epic:upcoming-missing", "gamerpower:retained"]);
   });
 
+  it("keeps a same-title new offer separate from retained ended history", async () => {
+    const root = await tempRoot();
+    const gamesPath = join(root, "games.json");
+    await writeGamesFile([game({
+      id: "epic:old-copy", title: "Returning Game", endAt: "2026-11-07T00:00:00Z", status: "ended"
+    })], gamesPath, now);
+    await writeFile(join(root, "notified.json"), "{}\n");
+    await runUpdate({
+      now, gamesPath, feedsDir: join(root, "feeds"), statePath: join(root, "notified.json"),
+      siteUrl: "https://site.example/", env: {}, notifiers: [],
+      fetchers: [fetcher("epic", [fetched({ id: "epic:new-copy", title: "Returning Game", endAt: "2026-11-20T00:00:00Z" })]), fetcher("gamerpower", [])]
+    });
+    const saved = await readGamesFile(gamesPath);
+    expect(saved?.games.find(item => item.id === "epic:new-copy")?.status).toBe("active");
+    expect(saved?.games.find(item => item.id === "epic:old-copy")?.status).toBe("ended");
+  });
+
+  it("keeps a new active transition pending if RSS persistence fails, then writes it on retry", async () => {
+    const root = await tempRoot();
+    const gamesPath = join(root, "games.json");
+    const feedsDir = join(root, "feeds");
+    const statePath = join(root, "notified.json");
+    const upcoming = game({ id: "epic:pending", title: "Pending", startAt: "2026-11-08T01:00:00Z", status: "upcoming" });
+    await writeGamesFile([upcoming], gamesPath, now);
+    await writeFile(feedsDir, "block directory creation");
+    const transitionNow = new Date("2026-11-08T02:00:00Z");
+    const run = (dir: string) => runUpdate({
+      now: transitionNow, gamesPath, feedsDir: dir, statePath, siteUrl: "https://site.example/", env: {}, notifiers: [],
+      fetchers: [fetcher("epic", []), fetcher("gamerpower", [])]
+    });
+
+    await expect(run(feedsDir)).rejects.toThrow();
+    expect((await readGamesFile(gamesPath))?.games.find(item => item.id === "epic:pending")?.status).toBe("upcoming");
+    await rm(feedsDir);
+    await run(feedsDir);
+    const feed = await readFile(join(feedsDir, "all.xml"), "utf8");
+    expect(feed).toContain("epic:pending");
+    expect((await readGamesFile(gamesPath))?.games.find(item => item.id === "epic:pending")?.status).toBe("active");
+  });
+
   it("does not RSS-add a previously active absent offer, but does add an upcoming-to-active transition", async () => {
     const root = await tempRoot();
     const gamesPath = join(root, "games.json");
