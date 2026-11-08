@@ -12,7 +12,7 @@ body { @apply bg-bg font-japan text-text antialiased; }
   .filters__claimed-label { @apply flex min-h-[44px] cursor-pointer items-center gap-2 text-[13px] font-medium text-text md:ml-auto; }
   .filters__claimed, .game-card__claimed { @apply h-5 w-5 shrink-0 cursor-pointer accent-accent; }
   .store-feeds { @apply order-3 flex w-full gap-2 overflow-x-auto border-t border-line pt-3; scrollbar-width: thin; }
-  .store-feeds__link { @apply flex min-h-[44px] shrink-0 items-center rounded-chip border border-line px-3 text-[12px] font-semibold text-dim transition-colors duration-150 ease-out hover:border-accent hover:text-text md:min-h-[40px]; }
+  .store-feeds__link { @apply flex min-h-[44px] shrink-0 items-center rounded-chip border border-line px-3 text-[12px] font-semibold text-dim transition-colors duration-150 ease-out hover:border-accent hover:text-text; }
 
   .game-section { @apply mb-12; }
   .game-section__title { @apply mb-4 flex items-center gap-3 text-[22px] font-bold leading-tight text-text; }
