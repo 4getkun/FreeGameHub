@@ -324,17 +324,22 @@ async function full(p: Page, errors: string[], failed: string[]): Promise<void> 
       const elapsed = Date.now() - start;
       const firstPaint = await p.evaluate(() => performance.getEntriesByName('first-contentful-paint')[0]?.startTime ?? null);
       await p.setRequestInterception(true);
+      let catalogRequest: import('puppeteer-core').HTTPRequest | undefined;
       const intercept = async (request: import('puppeteer-core').HTTPRequest) => {
         if (request.url().includes('/data/games.json')) {
-          await client.send('Network.emulateNetworkConditions', { offline: true, latency: 0, downloadThroughput: 0, uploadThroughput: 0 });
+          catalogRequest = request;
+          return;
         }
         await request.continue().catch(() => {});
       };
       p.on('request', intercept);
       try {
         await p.reload({ waitUntil: 'domcontentloaded', timeout: 20_000 });
+        assert(catalogRequest, 'ゲームデータのリクエストを捕捉できません');
+        await client.send('Network.emulateNetworkConditions', { offline: true, latency: 0, downloadThroughput: 0, uploadThroughput: 0 });
+        await catalogRequest.continue().catch(() => {});
         await p.waitForFunction(() => document.querySelector('[data-app-root] p')?.textContent?.includes('fetch'), { timeout: 10_000 });
-      } finally { p.off('request', intercept); await client.send('Network.emulateNetworkConditions', { offline: false, latency: 0, downloadThroughput: -1, uploadThroughput: -1 }); await p.setRequestInterception(false); }
+      } finally { p.off('request', intercept); await client.send('Network.emulateNetworkConditions', { offline: false, latency: 0, downloadThroughput: -1, uploadThroughput: -1 }); if (catalogRequest && !catalogRequest.isInterceptResolutionHandled()) await catalogRequest.continue().catch(() => {}); await p.setRequestInterception(false); }
       return `Slow 4G FCP ${firstPaint ?? '未取得'} ms（読込完了 ${elapsed} ms）、オフライン取得失敗を画面に表示`;
     } finally { await client.send('Network.emulateNetworkConditions', { offline: false, latency: 0, downloadThroughput: -1, uploadThroughput: -1 }); await client.send('Network.setCacheDisabled', { cacheDisabled: false }); }
   });

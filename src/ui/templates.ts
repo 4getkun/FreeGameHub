@@ -10,12 +10,13 @@ export const sections: Array<{ status: CardState; title: string }> = [
 export function element<K extends keyof HTMLElementTagNameMap>(tag: K, role: string, text?: string): HTMLElementTagNameMap[K] {
   const node = document.createElement(tag); node.className = role; if (text !== undefined) node.textContent = text; return node;
 }
-export function makeCard(game: Game, claimed: boolean, status: CardState, end: { text: string; countdown: string | null; imminent: boolean }): HTMLElement {
+export function cardImageUrl(game: Game): string | null { return game.imageUrl ? safeHttpUrl(game.imageUrl) : null; }
+export function makeCard(game: Game, claimed: boolean, status: CardState, end: { text: string; countdown: string | null; imminent: boolean }, imageUrl: string | null, imageIndex: number): HTMLElement {
   const card = element("article", "game-card"); card.dataset.state = status; card.dataset.claimed = String(claimed); card.dataset.approx = String(game.endApprox);
   const title = element("h3", "game-card__title");
   const url = safeHttpUrl(game.url);
   if (url) { const link = element("a", "game-card__link", game.title); link.href = url; link.rel = "noopener noreferrer"; title.append(link); } else title.textContent = game.title;
-  if (game.imageUrl && safeHttpUrl(game.imageUrl)) { const img = element("img", "game-card__image"); img.src = safeHttpUrl(game.imageUrl)!; img.alt = ""; img.loading = "lazy"; card.append(img); }
+  if (imageUrl) { const img = element("img", "game-card__image"); img.alt = ""; img.loading = imageIndex < 3 ? "eager" : "lazy"; if (imageIndex === 0) img.setAttribute("fetchpriority", "high"); img.width = 1280; img.height = 720; img.src = imageUrl; card.append(img); }
   card.append(title, element("p", "game-card__store", game.store), element("p", "game-card__type", typeLabel(game.type)), element("p", "game-card__end", end.text));
   if (status === "upcoming") card.append(element("p", "game-card__start", formatStart(game.startAt)));
   if (end.imminent) card.append(element("p", "game-card__imminent", "まもなく"));
