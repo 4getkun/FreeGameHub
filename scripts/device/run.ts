@@ -8,6 +8,7 @@ import { build } from 'vite';
 import { createDeviceFixture } from './fixture';
 import { measureDevicePerformance } from './performance';
 import { assertSmokeResult } from './smoke';
+import { testRootFontScaling } from './text-scale';
 import type { RecoveryState } from './watchdog';
 
 type Result = { name: string; status: 'pass' | 'fail' | 'skip'; detail: string };
@@ -156,6 +157,16 @@ async function full(p: Page, errors: string[], failed: string[]): Promise<void> 
     });
   }
   if (scaleMetrics.get('dark/portrait/1.0') === scaleMetrics.get('dark/portrait/1.5')) record('システム文字倍率の反映', 'skip', 'Chrome の CSS 文字サイズと表示領域に差がなく、文字が実際に拡大されたことを確認できません');
+  await check('ルート文字サイズ 20px / 24px', async () => {
+    const measurements = [];
+    for (const orientation of ['portrait', 'landscape']) {
+      shell('settings', 'put', 'system', 'user_rotation', orientation === 'portrait' ? '0' : '1');
+      await p.waitForFunction(expected => expected === 'portrait' ? innerHeight > innerWidth : innerWidth > innerHeight, { timeout: 10_000 }, orientation);
+      measurements.push(...(await testRootFontScaling(p, output, orientation)).map(m => ({ orientation, ...m })));
+    }
+    assert(measurements.every(m => m.cards > 0 && m.scrollWidth <= m.width && m.overflow === 0 && m.overlaps === 0), JSON.stringify(measurements));
+    return JSON.stringify(measurements);
+  });
   await check('実タッチ: 種別と受取済み', async () => {
     await p.evaluate(() => window.scrollTo(0, 0));
     const touch = async (selector: string) => { const target = await p.$(selector); assert(target, `対象なし: ${selector}`); await target.scrollIntoView(); const box = await target.boundingBox(); assert(box, '座標を取得できません'); const x = box.x + box.width / 2, y = box.y + box.height / 2; await client.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] }); await client.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); await delay(600); };
@@ -226,17 +237,34 @@ async function full(p: Page, errors: string[], failed: string[]): Promise<void> 
   });
   await check('実タッチ: 外部リンクと戻る', async () => {
     await p.goto('http://localhost:4173/?type=all', { waitUntil: 'networkidle0' });
+    await p.bringToFront();
     const link = await p.$('.game-card__link'); assert(link, 'カードのリンクがありません');
-    const href = await link.evaluate(e => (e as HTMLAnchorElement).href); assert(href.startsWith('https://example.com/'), '検証用リンクが不正です');
+    const attributes = await link.evaluate(e => ({ href: (e as HTMLAnchorElement).href, target: (e as HTMLAnchorElement).target, rel: (e as HTMLAnchorElement).rel }));
+    assert(attributes.href.startsWith('https://example.com/'), '検証用リンクが不正です');
+    if (attributes.target === '_blank') assert(attributes.rel.split(/\s+/).includes('noopener') && attributes.rel.split(/\s+/).includes('noreferrer'), '新規タブの rel が不足しています');
+    const tabId = (target: import('puppeteer-core').Target) => (target as unknown as { _targetId: string })._targetId;
+    const beforeTargets = browser!.targets().filter(t => t.type() === 'page');
+    const beforeIds = new Set(beforeTargets.map(tabId));
+    const ownId = tabId(p.target());
+    const describe = (targets: import('puppeteer-core').Target[]) => targets.map(t => ({ id: tabId(t) === ownId ? '検証元' : beforeIds.has(tabId(t)) ? '既存タブ' : '新規タブ', url: tabId(t) === ownId || !beforeIds.has(tabId(t)) ? t.url() : '(非表示)' }));
+    const evidence: { attributes: typeof attributes; before: ReturnType<typeof describe>; after?: ReturnType<typeof describe>; back?: ReturnType<typeof describe> } = { attributes, before: describe(beforeTargets) };
     await link.scrollIntoView(); const box = await link.boundingBox(); assert(box, 'タッチ座標がありません');
     const x = box.x + box.width / 2, y = box.y + box.height / 2;
-    const navigation = p.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 15_000 });
-    await client.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
-    await client.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
-    await navigation; assert(p.url().startsWith('https://example.com/'), '外部リンクに遷移しません');
-    device('shell', 'input', 'keyevent', 'KEYCODE_BACK');
-    await p.waitForFunction(() => location.hostname === 'localhost', { timeout: 10_000 });
-    return '実タッチで外部リンクへ遷移し、端末の戻るボタンで復帰';
+    try {
+      await client.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
+      await client.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+      for (let i = 0; i < 50; i++) { if (p.url().startsWith('https://example.com/') || browser!.targets().some(t => t.type() === 'page' && !beforeIds.has(tabId(t)))) break; await delay(200); }
+      const afterTargets = browser!.targets().filter(t => t.type() === 'page'); evidence.after = describe(afterTargets);
+      const opened = afterTargets.find(t => !beforeIds.has(tabId(t)));
+      assert(opened || p.url().startsWith('https://example.com/'), '外部リンクに遷移しません');
+      if (opened) { const newPage = await opened.page(); assert(newPage, '新しいタブを取得できません'); await newPage.bringToFront(); }
+      else await p.bringToFront();
+      device('shell', 'input', 'keyevent', 'KEYCODE_BACK');
+      for (let i = 0; i < 50; i++) { if (opened ? !browser!.targets().some(t => tabId(t) === tabId(opened)) && !p.isClosed() : p.url().startsWith('http://localhost:4173/')) break; await delay(200); }
+      const backTargets = browser!.targets().filter(t => t.type() === 'page'); evidence.back = describe(backTargets);
+      assert(opened ? !backTargets.some(t => tabId(t) === tabId(opened)) && !p.isClosed() : p.url().startsWith('http://localhost:4173/'), '端末の戻るボタンで復帰できません');
+      return JSON.stringify(evidence);
+    } finally { writeFileSync(join(output, 'back-targets.json'), JSON.stringify(evidence, null, 2)); }
   });
   await check('タップ領域', async () => {
     if (!p.url().startsWith('http://localhost:4173/')) await p.goto('http://localhost:4173/?type=all', { waitUntil: 'networkidle0' });
@@ -339,7 +367,7 @@ async function cleanup(): Promise<void> {
     if (reverse) try { device('reverse', '--remove', 'tcp:4173'); } catch { record('reverse 解除', 'fail', '解除できませんでした'); }
     if (forward) try { device('forward', '--remove', 'tcp:9222'); } catch { record('forward 解除', 'fail', '解除できませんでした'); }
     server?.kill();
-  }
+  } else server?.unref();
   if (before.night) {
     try { if (settingsChanged) restore(); after = snapshot(); record('端末設定の復元', JSON.stringify(before) === JSON.stringify(after) ? 'pass' : 'fail', JSON.stringify(before) === JSON.stringify(after) ? '実行前後が一致' : '実行前後が一致しません'); }
     catch (error) { record('端末設定の復元', 'fail', error instanceof Error ? error.message : String(error)); }
