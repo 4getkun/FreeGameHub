@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { mergeGames } from "../scripts/merge";
 import type { Game } from "../src/shared/types";
 
@@ -14,13 +14,36 @@ function game(overrides: Partial<Omit<Game, "status" | "summaryJa">> = {}): Omit
 }
 
 describe("mergeGames", () => {
-  it("deduplicates Flotsam and keeps Epic dates, URL, image and precise end while filling GamerPower worth/type", () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  it("merges actual Flotsam titles using the English title and preserves the exact Epic end", () => {
     const result = mergeGames([
-      game({ title: "Flotsam •Y—¬ƒKƒ‰ƒNƒ^ƒEƒ“", titleEn: "Flotsam" }),
-      game({ id: "gamerpower:3845", title: "Flotsam", titleEn: "Flotsam", type: "dlc", url: "https://gamerpower.example/flotsam", imageUrl: "https://gp.example/image.jpg", startAt: "2026-11-05T11:06:40Z", endAt: "2026-11-12T23:59:00Z", endApprox: true, worthUsd: 24.99, source: "gamerpower" })
+      game({title:"Flotsam æ¼‚æµã‚¬ãƒ©ã‚¯ã‚¿ã‚¦ãƒ³",titleEn:"Flotsam"}),
+      game({id:"gamerpower:3845",title:"Flotsam",titleEn:"Flotsam",source:"gamerpower",endAt:"2026-11-12T23:59:00Z",endApprox:true,worthUsd:24.99})
     ], now);
     expect(result).toHaveLength(1);
-    expect(result[0]).toMatchObject({ id: "epic:flotsam", title: "Flotsam •Y—¬ƒKƒ‰ƒNƒ^ƒEƒ“", type: "dlc", url: "https://store.example/flotsam", imageUrl: "https://img.example/flotsam.jpg", startAt: "2026-11-05T16:00:00Z", endAt: "2026-11-12T16:00:00Z", endApprox: false, worthUsd: 24.99, source: "epic", status: "active" });
+    expect(result[0]).toMatchObject({source:"epic",endAt:"2026-11-12T16:00:00Z",endApprox:false,worthUsd:24.99,type:"game"});
+  });
+
+  it("does not merge Flotsam across different types", () => {
+    const result = mergeGames([
+      game({ title: "Flotsam æ¼‚æµã‚¬ãƒ©ã‚¯ã‚¿ã‚¦ãƒ³", titleEn: "Flotsam" }),
+      game({ id: "gamerpower:3845", title: "Flotsam", titleEn: "Flotsam", type: "dlc", url: "https://gamerpower.example/flotsam", imageUrl: "https://gp.example/image.jpg", startAt: "2026-11-05T11:06:40Z", endAt: "2026-11-12T23:59:00Z", endApprox: true, worthUsd: 24.99, source: "gamerpower" })
+    ], now);
+    expect(result).toHaveLength(2);
+    expect(result[0]).toMatchObject({ id: "epic:flotsam", type: "game", worthUsd: null });
+    expect(result[1]).toMatchObject({ id: "gamerpower:3845", type: "dlc", worthUsd: 24.99 });
+  });
+
+  it("logs same-title games with different types as candidates without merging", () => {
+    const log = vi.spyOn(console, "info").mockImplementation(() => {});
+    const result = mergeGames([
+      game({ title: "Idle Champions of the Forgotten Realms", titleEn: "Idle Champions of the Forgotten Realms" }),
+      game({ id: "gamerpower:idle-dlc", title: "Idle Champions of the Forgotten Realms DLC", titleEn: "Idle Champions of the Forgotten Realms DLC", type: "dlc", source: "gamerpower", worthUsd: 9.99 })
+    ], now);
+    expect(result).toHaveLength(2);
+    expect(log).toHaveBeenCalledWith(expect.stringContaining("å€™è£œ"));
+    expect(log).toHaveBeenCalledWith(expect.stringContaining("Idle Champions"));
   });
 
   it("recomputes upcoming and ended status from the supplied clock", () => {

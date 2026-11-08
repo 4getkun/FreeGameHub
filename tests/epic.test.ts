@@ -11,3 +11,8 @@ it("keeps Japanese offers if English fetch fails", async () => {
  vi.stubGlobal("fetch", vi.fn().mockResolvedValueOnce(response([offer])).mockRejectedValueOnce(new Error("failed")));
  expect((await fetchGames())[0].titleEn).toBeNull();
 });
+
+it("maps base games, add-ons and unknown offer types", async () => {
+ vi.stubGlobal("fetch", vi.fn().mockResolvedValueOnce(response([ {...offer,id:"base",offerType:"BASE_GAME"}, {...offer,id:"dlc",offerType:"ADD_ON"}, {...offer,id:"bundle",offerType:"BUNDLE"} ])).mockResolvedValueOnce(response([])));
+ expect((await fetchGames()).map(g=>g.type)).toEqual(["game","dlc","other"]);
+});

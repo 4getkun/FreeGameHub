@@ -33,7 +33,7 @@ export async function fetchGames(): Promise<Omit<Game, "status" | "summaryJa">[]
     return promotions.map(p => {
       const slug = offer.catalogNs?.mappings?.[0]?.pageSlug ?? offer.productSlug ?? offer.urlSlug;
       if (!slug) throw new Error(`Epic offer missing product slug: ${offer.id}`);
-      return { id: `epic:${offer.id}`, title: offer.title, titleEn: englishTitles.get(offer.id) ?? null, store: "epic" as const, type: offer.offerType === "ADD_ON" ? "dlc" as const : "game" as const, url: `https://store.epicgames.com/ja/p/${slug.replace(/\/home$/, "")}`, imageUrl: offer.keyImages?.find(i => i.type === "OfferImageWide")?.url ?? offer.keyImages?.[0]?.url ?? null, startAt: new Date(p.startDate).toISOString(), endAt: new Date(p.endDate).toISOString(), endApprox: false, worthUsd: null, source: "epic" as const, descriptionOrig: offer.description ?? null };
+      return { id: `epic:${offer.id}`, title: offer.title, titleEn: englishTitles.get(offer.id) ?? null, store: "epic" as const, type: offer.offerType === "BASE_GAME" ? "game" as const : offer.offerType === "ADD_ON" || offer.offerType === "DLC" ? "dlc" as const : "other" as const, url: `https://store.epicgames.com/ja/p/${slug.replace(/\/home$/, "")}`, imageUrl: offer.keyImages?.find(i => i.type === "OfferImageWide")?.url ?? offer.keyImages?.[0]?.url ?? null, startAt: new Date(p.startDate).toISOString(), endAt: new Date(p.endDate).toISOString(), endApprox: false, worthUsd: null, source: "epic" as const, descriptionOrig: offer.description ?? null };
     });
   });
 }

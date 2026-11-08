@@ -1,4 +1,4 @@
-import type { Game, GameType } from "../src/shared/types";
+import type { Game } from "../src/shared/types";
 import { computeStatus } from "../src/shared/status";
 
 export type FetchedGame = Omit<Game, "status" | "summaryJa">;
@@ -40,7 +40,14 @@ function withStatus(game: FetchedGame, now: Date): Game {
 export function mergeGames(input: FetchedGame[], now = new Date()): Game[] {
   const merged: Game[] = [];
   for (const fetched of input) {
-    const matchAt = merged.findIndex(existing => matchTitle(existing, fetched) !== null);
+    let matchAt = -1;
+    merged.forEach((existing, index) => {
+      const titleMatch = matchTitle(existing, fetched);
+      if (!titleMatch) return;
+      if (existing.type !== fetched.type) {
+        console.info(`[merge] 候補: "${existing.title}" (${existing.type}) / "${fetched.title}" (${fetched.type})`);
+      } else if (matchAt < 0) matchAt = index;
+    });
     if (matchAt < 0) {
       merged.push(withStatus(fetched, now));
       continue;
@@ -55,7 +62,7 @@ export function mergeGames(input: FetchedGame[], now = new Date()): Game[] {
     const combined: Game = {
       ...preferred,
       worthUsd: preferred.worthUsd ?? supplemental.worthUsd,
-      type: (preferred.source === "epic" ? supplemental.type : preferred.type) as GameType
+      type: preferred.type
     };
     merged[matchAt] = { ...combined, status: computeStatus(combined, now) };
   }
