@@ -68,6 +68,7 @@ export async function fetchGames(): Promise<Omit<Game, "status" | "summaryJa">[]
     return {
       id: `gamerpower:${item.id}`,
       title: cleanTitle(item.title),
+      titleEn: cleanTitle(item.title),
       store: mapStore(item.platforms),
       type: mapType(item.type),
       url,

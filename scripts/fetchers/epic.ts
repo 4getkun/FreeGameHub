@@ -16,13 +16,24 @@ export async function fetchGames(): Promise<Omit<Game, "status" | "summaryJa">[]
   const data: unknown = await response.json();
   const elements = (data as { data?: { Catalog?: { searchStore?: { elements?: Offer[] } } } }).data?.Catalog?.searchStore?.elements;
   if (!Array.isArray(elements)) throw new Error("Invalid Epic response");
+  let englishTitles = new Map<string, string>();
+  try {
+    const englishResponse = await fetch("https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale=en-US&country=JP&allowCountries=JP");
+    if (!englishResponse.ok) throw new Error("English Epic request failed");
+    const englishData: unknown = await englishResponse.json();
+    const englishElements = (englishData as { data?: { Catalog?: { searchStore?: { elements?: Offer[] } } } }).data?.Catalog?.searchStore?.elements;
+    if (!Array.isArray(englishElements)) throw new Error("Invalid English Epic response");
+    englishTitles = new Map(englishElements.filter(item => typeof item.id === "string" && typeof item.title === "string").map(item => [item.id, item.title]));
+  } catch {
+    console.warn("Epic English titles unavailable");
+  }
   return elements.flatMap((offer) => {
     const groups = [...(offer.promotions?.promotionalOffers ?? []), ...(offer.promotions?.upcomingPromotionalOffers ?? [])];
     const promotions = groups.flatMap(group => group.promotionalOffers ?? []).filter(p => p.discountSetting?.discountPercentage === 0);
     return promotions.map(p => {
       const slug = offer.catalogNs?.mappings?.[0]?.pageSlug ?? offer.productSlug ?? offer.urlSlug;
       if (!slug) throw new Error(`Epic offer missing product slug: ${offer.id}`);
-      return { id: `epic:${offer.id}`, title: offer.title, store: "epic" as const, type: offer.offerType === "ADD_ON" ? "dlc" as const : "game" as const, url: `https://store.epicgames.com/ja/p/${slug.replace(/\/home$/, "")}`, imageUrl: offer.keyImages?.find(i => i.type === "OfferImageWide")?.url ?? offer.keyImages?.[0]?.url ?? null, startAt: new Date(p.startDate).toISOString(), endAt: new Date(p.endDate).toISOString(), endApprox: false, worthUsd: null, source: "epic" as const, descriptionOrig: offer.description ?? null };
+      return { id: `epic:${offer.id}`, title: offer.title, titleEn: englishTitles.get(offer.id) ?? null, store: "epic" as const, type: offer.offerType === "ADD_ON" ? "dlc" as const : "game" as const, url: `https://store.epicgames.com/ja/p/${slug.replace(/\/home$/, "")}`, imageUrl: offer.keyImages?.find(i => i.type === "OfferImageWide")?.url ?? offer.keyImages?.[0]?.url ?? null, startAt: new Date(p.startDate).toISOString(), endAt: new Date(p.endDate).toISOString(), endApprox: false, worthUsd: null, source: "epic" as const, descriptionOrig: offer.description ?? null };
     });
   });
 }
