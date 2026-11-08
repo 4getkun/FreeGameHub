@@ -133,10 +133,11 @@ export async function runUpdate(options: UpdateOptions = {}): Promise<UpdateResu
       const current = finalFile.games.find(game => game.id === newId);
       if (!current) continue;
       for (const kind of ["new", "ending-soon"] as const) {
-        const oldKey = notificationKey(old, kind);
         const newKey = notificationKey(current, kind);
-        const previousChannels = notified[oldKey];
-        if (previousChannels) {
+        const oldKeys = [notificationKey(old, kind), ...(old.startAt === null ? [] : [`${old.id}:${kind}`])];
+        for (const oldKey of oldKeys) {
+          const previousChannels = notified[oldKey];
+          if (!previousChannels) continue;
           notified[newKey] = [...new Set([...(notified[newKey] ?? []), ...previousChannels])];
           delete notified[oldKey];
         }

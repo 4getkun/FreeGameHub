@@ -122,7 +122,7 @@ describe("P4 update runner", () => {
     await writeGamesFile([oldSame, oldNewPeriod], gamesPath, now);
     await writeRssFeeds([oldSame, oldNewPeriod], { outputDir: feedsDir, siteUrl: "https://site.example/" });
     await writeFile(statePath, JSON.stringify({
-      "gamerpower:501@2026-11-07T00:00:00Z:new": ["test"],
+      "gamerpower:501:new": ["test"],
       "gamerpower:502@2026-11-07T00:00:00Z:new": ["test"]
     }));
     const send = vi.fn<Notifier["send"]>(async () => {});
@@ -145,7 +145,7 @@ describe("P4 update runner", () => {
     expect(feed).not.toContain("epic:shared@2026-11-08T00:00:00Z");
     const state = JSON.parse(await readFile(statePath, "utf8"));
     expect(state["epic:shared@2026-11-08T00:00:00Z:new"]).toEqual(["test"]);
-    expect(state).not.toHaveProperty("gamerpower:501@2026-11-07T00:00:00Z:new");
+    expect(state).not.toHaveProperty("gamerpower:501:new");
   });
 
   it("rearms notifications for a changed promotion period on the same active Epic ID", async () => {
