@@ -1,0 +1,20 @@
+{
+  "groqModel": "openai/gpt-oss-120b",
+  "gamerpower": {
+    "platforms": {
+      "epic games store": "epic",
+      "steam": "steam",
+      "gog": "gog",
+      "itch.io": "itch",
+      "prime gaming": "prime",
+      "amazon": "prime"
+    },
+    "types": {
+      "game": "game",
+      "dlc": "dlc",
+      "loot": "loot",
+      "beta": "beta",
+      "early access": "beta"
+    }
+  }
+}
