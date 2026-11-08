@@ -5,7 +5,7 @@ import { formatStart } from "./start-time";
 import type { Game, Status } from "../shared/types";
 import { claimedIds } from "./state";
 import type { UiState } from "./state";
-import { element, makeCard, makeControls, sections, type CardState } from "./templates";
+import { cardImageUrl, element, makeCard, makeControls, sections, type CardState } from "./templates";
 
 export function render(root: HTMLElement, games: Game[], state: UiState, now = new Date()): void {
   const claimed = claimedIds(), controls = makeControls(state); root.replaceChildren(element("h1", "app__title", "FreeGameHub"), controls);
@@ -21,11 +21,17 @@ export function render(root: HTMLElement, games: Game[], state: UiState, now = n
     if (status === "active" && !game.endApprox && end.imminent) buckets.get("ending")!.push(game);
     else buckets.get(status)!.push(game);
   }
+  let imageIndex = 0;
   for (const section of sections) {
     const group = element("section", "game-section"); group.dataset.section = section.status;
     group.append(element("h2", "game-section__title", section.title)); const list = element("div", "game-section__games");
     const ordered = section.status === "ending" ? orderByEndAt(buckets.get(section.status)!) : buckets.get(section.status)!;
-    for (const game of ordered) list.append(makeCard(game, claimed.has(game.id), section.status, formatEnd(game, now)));
+    for (const game of ordered) {
+      const imageUrl = cardImageUrl(game);
+      if (imageUrl && imageIndex === 0) updateHeroPreconnect(imageUrl);
+      list.append(makeCard(game, claimed.has(game.id), section.status, formatEnd(game, now), imageUrl, imageIndex));
+      if (imageUrl) imageIndex++;
+    }
     if (!ordered.length) list.append(element("p", "game-section__empty", emptyMessage(section.status)));
     if (section.status === "active") {
       const upcoming = orderByStartAt(buckets.get("upcoming")!);
@@ -42,6 +48,16 @@ export function render(root: HTMLElement, games: Game[], state: UiState, now = n
     }
     group.append(list); root.append(group);
   }
+  if (!imageIndex) updateHeroPreconnect(null);
+}
+
+function updateHeroPreconnect(imageUrl: string | null): void {
+  const existing = document.head.querySelector<HTMLLinkElement>('link[data-hero-preconnect]');
+  const origin = imageUrl ? new URL(imageUrl).origin : null;
+  if (!origin || origin === location.origin) { existing?.remove(); return; }
+  if (existing?.href === `${origin}/`) return;
+  existing?.remove();
+  const link = document.createElement("link"); link.rel = "preconnect"; link.href = origin; link.dataset.heroPreconnect = ""; document.head.append(link);
 }
 
 function emptyMessage(status: string): string {
