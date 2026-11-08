@@ -19,11 +19,14 @@ Pages はコミットを受けてビルドし、`dist` の内容を公開しま�
 
 P4 の手動実行は確認済みです。更新を [run 42482039934](https://github.com/4getkun/FreeGameHub/actions/runs/42482039934)、差分なし時のコミット省略を [run 42482090574](https://github.com/4getkun/FreeGameHub/actions/runs/42482090574) で確認しました。workflow の `environment: production` は設定されていますが、現在の private リポジトリ／GitHub Free で Environment の保護・Secrets が利用でき、強制されるかは未確認です。GitHub の公式仕様では private リポジトリの Environment secrets 利用に Pro、Team または Enterprise が必要とされています。将来登録する Secrets は `production` Environment 用とし、リポジトリ Secrets には登録しないでください。利用可否が確認できるまで秘密値を登録しないでください。[Workflow の手動実行](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-running-a-workflow) · [Environments の利用条件](https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments) · [Environment secrets](https://docs.github.com/en/actions/concepts/security/secrets)
 
-## Secrets を登録する前のチェックリスト
+## 公開前チェックリスト
 
-1. リポジトリを public にし、その時点で Git 履歴を再検査する。
-2. `production` Environment の `main` 限定ルールが実際に強制されることを確認する。public リポジトリでは無料で保護設定を利用できる。
-3. その後で初めて、必要な Secrets を `production` Environment に登録する。
+1. Git 履歴全体を再検査し、メールアドレス、ユーザー名を含むローカルの絶対パス、認証情報や `.env` 系ファイルが公開されないことを確認する。問題があれば解決するまで公開しない。
+2. リポジトリを public にする。
+3. `production` Environment の `main` 限定ルールが実際に強制されることを確認する。public リポジトリでは無料で保護設定を利用できる。
+4. その後で初めて、必要な Secrets を `production` Environment に登録する。
+5. 上記の Cloudflare Pages の設定に従い、リポジトリを Pages に連携する。
+6. Pages のビルド環境変数 `SITE_URL` に公開サイトの絶対 URL を設定する。未設定の場合、OG・Twitter の画像 URL と OG のページ URL は出力されない。
 
 **Environment 保護の実効性は、private リポジトリでは未確認。Secrets の登録前に必ず確認すること。**
 
