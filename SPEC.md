@@ -267,6 +267,13 @@ export async function send(game: Game, kind: NotifyKind, ctx: NotifyContext, env
 - Playwright 等でスクリーンショットを撮り、スマホ幅（390px程度）とPC幅（1280px程度）、ライト／ダークの計4通りを、目視で確認して調整する
 - 受入: 4通りで崩れがなく、文字のコントラストが十分で、P6 の受入条件が引き続き通る
 
+### 現在の実装状況
+
+- P0〜P3、P3b、P3c、P4〜P7 は実装済み。P4 の GitHub 上での更新と差分なし時のコミット省略は README に記載した手動実行で確認済み。
+- CI は PR と `main` への push で型チェック、テスト、ビルド、依存関係監査を実行する。Secrets と `production` Environment は使用せず、実機テストは含めない。
+- Android 実機テストは `npm run test:device:smoke` と `npm run test:device` で実行し、結果を `device-report/` に保存する。接続と実行の手順は README を参照する。
+- LCP 対策として先頭3枚の画像を eager 読み込みし、先頭画像に高優先度とそのホストへの preconnect を指定する。画像サイズを指定し、`games.json` を preload する。画像 URL 自体の縮小は現時点の `main` には含まれない。
+
 ---
 
 ## 8. 非機能要件
