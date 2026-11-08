@@ -1,3 +1,95 @@
-.game-card[data-claimed="true"] {
-  @apply opacity-50;
+body { @apply bg-bg font-japan text-text antialiased; }
+  .app { @apply mx-auto flex min-h-screen max-w-[1200px] flex-col px-4 pb-12 pt-8 md:px-8 md:pt-12; }
+  .app__title { @apply mb-8 font-space-grotesk text-[28px] font-bold leading-tight tracking-tight text-text md:mb-12 md:text-[40px]; }
+  .app__title::after { content: "."; @apply text-accent-text; }
+
+  .filters { @apply mb-8 flex flex-wrap items-center gap-3 rounded-card border border-line bg-surface p-4 md:gap-4; }
+  .filters__label { @apply flex min-h-[44px] items-center gap-3 text-[13px] font-bold text-dim; }
+  .filters__store { @apply min-h-[44px] min-w-[132px] cursor-pointer rounded-input border border-line bg-surface-2 px-3 text-sm font-semibold text-text; }
+  .type-tabs { @apply order-2 flex w-full gap-1 overflow-x-auto rounded-button bg-surface-2 p-1 md:order-none md:w-auto md:max-w-full; scrollbar-width: thin; }
+  .type-tabs__tab { @apply min-h-[44px] shrink-0 rounded-input px-3 text-[13px] font-semibold text-dim transition-colors duration-150 ease-out hover:text-text; }
+  .type-tabs__tab[aria-selected="true"] { @apply bg-accent text-accent-on; }
+  .filters__claimed-label { @apply flex min-h-[44px] cursor-pointer items-center gap-2 text-[13px] font-medium text-text md:ml-auto; }
+  .filters__claimed, .game-card__claimed { @apply h-5 w-5 shrink-0 cursor-pointer accent-accent; }
+  .store-feeds { @apply order-3 flex w-full gap-2 overflow-x-auto border-t border-line pt-3; scrollbar-width: thin; }
+  .store-feeds__link { @apply flex min-h-[44px] shrink-0 items-center rounded-chip border border-line px-3 text-[12px] font-semibold text-dim transition-colors duration-150 ease-out hover:border-accent hover:text-text md:min-h-[40px]; }
+
+  .game-section { @apply mb-12; }
+  .game-section__title { @apply mb-4 flex items-center gap-3 text-[22px] font-bold leading-tight text-text; }
+  .game-section__title::before { content: ""; @apply h-6 w-1 shrink-0 rounded-chip bg-accent; }
+  .game-section[data-section="ending"] .game-section__title::before { @apply bg-urgent; }
+  .game-section__games { @apply grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4; }
+  .game-section[data-section="upcoming"] .game-section__games { @apply md:grid-cols-2; }
+  .game-section[data-section="ended"] .game-section__games { @apply grid-cols-1; }
+  .game-section__empty { @apply rounded-card border border-dashed border-line bg-surface-2 px-6 py-8 text-sm text-dim md:col-span-full; }
+
+  .game-card { @apply relative flex min-w-0 flex-col overflow-hidden rounded-card border border-line bg-surface pb-4 transition-colors duration-150 ease-out hover:border-accent; }
+  .game-card::before { content: ""; @apply block w-full shrink-0 bg-cover-0; aspect-ratio: 16 / 9; }
+  .game-card:nth-child(6n + 2)::before { @apply bg-cover-1; }
+  .game-card:nth-child(6n + 3)::before { @apply bg-cover-2; }
+  .game-card:nth-child(6n + 4)::before { @apply bg-cover-3; }
+  .game-card:nth-child(6n + 5)::before { @apply bg-cover-4; }
+  .game-card:nth-child(6n)::before { @apply bg-cover-5; }
+  .game-card__image { @apply absolute left-0 top-0 block w-full object-cover; aspect-ratio: 16 / 9; }
+  .game-card__title { @apply px-4 pb-1 pt-4 text-base font-bold leading-snug text-text; overflow-wrap: anywhere; }
+  .game-card__link { @apply inline-flex min-h-[44px] items-center text-text hover:text-accent-text; }
+  .game-card__link::after { content: " ↗"; @apply ml-1 inline-block shrink-0 text-sm text-accent-text; }
+  .game-card__store { @apply absolute left-3 top-3 z-10 rounded-chip border border-line bg-surface px-3 py-1 text-[12px] font-bold uppercase text-text; }
+  .game-card__type { @apply px-4 text-[12px] font-semibold text-dim; }
+  .game-card__end { @apply px-4 pt-3 font-space-grotesk text-[13px] font-semibold tabular-nums text-dim; }
+  .game-card__countdown { @apply px-4 pt-1 font-space-grotesk text-[22px] font-bold leading-tight tabular-nums text-text; }
+  .game-card__imminent { @apply absolute right-3 top-3 z-10 rounded-chip border border-urgent-line bg-urgent-bg px-3 py-1 text-[12px] font-bold text-urgent; }
+  .game-card__imminent::before { content: "● "; }
+  .game-card__worth { @apply px-4 pt-3 font-space-grotesk text-[13px] font-semibold tabular-nums text-accent-text; }
+  .game-card__summary { @apply px-4 pt-3 text-sm leading-relaxed text-dim; overflow-wrap: anywhere; }
+  .game-card .badge { @apply mx-4 mt-3 self-start rounded-chip border border-line bg-surface-2 px-3 py-1 text-[12px] font-semibold text-text; }
+  .game-card__claimed-label { @apply mx-4 mt-auto flex min-h-[44px] cursor-pointer items-center gap-2 whitespace-nowrap pt-3 text-[13px] font-medium text-text; }
+  .game-card[data-state="ending"] { @apply border-urgent-line; }
+  .game-card[data-state="ending"] .game-card__countdown { @apply text-urgent; }
+  .game-card[data-claimed="true"] .game-card__image { @apply opacity-50; }
+  .game-card[data-claimed="true"]::before { @apply opacity-50; }
+  .game-card[data-claimed="true"] .game-card__claimed-label { @apply font-bold text-accent-text; }
+
+  .game-section[data-section="ending"] .game-card:first-child .game-card__title { @apply text-2xl md:text-[28px]; }
+  .game-section[data-section="ending"] .game-card:first-child .game-card__countdown { @apply text-[40px] leading-none md:text-[52px]; }
+  .game-section[data-section="upcoming"] .game-card, .game-section[data-section="ended"] .game-card { @apply bg-surface-2; }
+  .game-section[data-section="ended"] .game-card { @apply md:grid md:grid-cols-[160px_1fr_auto] md:items-center md:gap-x-4 md:pb-0; }
+  .game-section[data-section="ended"] .game-card::before { @apply md:col-start-1 md:row-span-5 md:row-start-1; }
+  .game-section[data-section="ended"] .game-card__image { @apply md:w-[160px]; }
+  .game-section[data-section="ended"] .game-card__title { @apply md:col-start-2 md:pt-3; }
+  .game-section[data-section="ended"] .game-card__type, .game-section[data-section="ended"] .game-card__end, .game-section[data-section="ended"] .game-card__worth, .game-section[data-section="ended"] .game-card__summary { @apply md:col-start-2 md:pt-1; }
+  .game-section[data-section="ended"] .game-card__claimed-label { @apply md:col-start-3 md:row-span-4 md:row-start-1 md:mt-0 md:pt-0; }
+  .game-section[data-section="ended"] .game-card__store { @apply md:hidden; }
+
+  :where(a, button, select, input):focus-visible { outline: 2px solid rgb(var(--color-accent)); outline-offset: 2px; }
+  @media (min-width: 1024px) {
+    .game-section[data-section="ending"] .game-card:first-child { grid-column: span 2; grid-row: span 2; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; scroll-behavior: auto !important; }
+  }
+
+.game-card[data-approx="true"] .game-card__end::after {
+  content: " 時刻未確定";
+  @apply ml-2 inline-block rounded-chip border border-line bg-surface-2 px-2 py-1 font-japan text-[12px] font-semibold text-dim;
+}
+/* The title link remains the single actionable link; its label is a presentation hook. */
+.game-card:is([data-state="active"], [data-state="ending"]) .game-card__link::after {
+  content: "受け取る ↗";
+  @apply absolute bottom-4 right-4 ml-0 flex min-h-[44px] items-center justify-center rounded-button bg-accent px-3 text-[13px] font-bold text-accent-on;
+}
+.game-card[data-claimed="true"]:is([data-state="active"], [data-state="ending"]) .game-card__link::after {
+  content: "ストアを開く ↗";
+  @apply border border-line bg-surface text-text;
+}
+.game-card:is([data-state="active"], [data-state="ending"]) .game-card__claimed-label { @apply mr-[120px]; }
+.game-card[data-state="ending"] .game-card__imminent::after { content: "終了"; }
+@media (min-width: 768px) {
+  .game-section[data-section="upcoming"] .game-card { @apply grid grid-cols-[144px_1fr] items-start gap-x-4 pb-3; }
+  .game-section[data-section="upcoming"] .game-card::before { @apply col-start-1 row-span-7 row-start-1; }
+  .game-section[data-section="upcoming"] .game-card__image { @apply w-[144px]; }
+  .game-section[data-section="upcoming"] .game-card__title { @apply col-start-2 pt-3; }
+  .game-section[data-section="upcoming"] .game-card__type, .game-section[data-section="upcoming"] .game-card__end,
+  .game-section[data-section="upcoming"] .game-card__countdown, .game-section[data-section="upcoming"] .game-card__worth,
+  .game-section[data-section="upcoming"] .game-card__summary, .game-section[data-section="upcoming"] .game-card__claimed-label { @apply col-start-2 pt-1; }
 }

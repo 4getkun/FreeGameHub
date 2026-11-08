@@ -10,7 +10,7 @@ export function element<K extends keyof HTMLElementTagNameMap>(tag: K, role: str
   const node = document.createElement(tag); node.className = role; if (text !== undefined) node.textContent = text; return node;
 }
 export function makeCard(game: Game, claimed: boolean, status: CardState, end: { text: string; countdown: string | null; imminent: boolean }): HTMLElement {
-  const card = element("article", "game-card"); card.dataset.state = status; card.dataset.claimed = String(claimed);
+  const card = element("article", "game-card"); card.dataset.state = status; card.dataset.claimed = String(claimed); card.dataset.approx = String(game.endApprox);
   const title = element("h3", "game-card__title");
   const url = safeHttpUrl(game.url);
   if (url) { const link = element("a", "game-card__link", game.title); link.href = url; link.rel = "noopener noreferrer"; title.append(link); } else title.textContent = game.title;
