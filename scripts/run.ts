@@ -117,7 +117,7 @@ export async function runUpdate(options: UpdateOptions = {}): Promise<UpdateResu
     return previousGame?.status === "active" && previousGame.startAt !== game.startAt;
   });
   // Persist the RSS transition first: if that write fails, the old games.json status remains retryable.
-  await writeRssFeeds(newlyActive, { outputDir: feedsDir, siteUrl });
+  await writeRssFeeds([...newlyActive, ...newlyPromoted], { outputDir: feedsDir, siteUrl });
   if (dataChanged) await writeGamesFile(finalFile.games, gamesPath, now);
   await runNotifications(finalFile.games, {
     upcoming: finalFile.games.filter(game => game.status === "upcoming")

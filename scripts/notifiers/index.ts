@@ -3,6 +3,7 @@ import { dirname, extname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import type { Game } from "../../src/shared/types";
 import { notificationText, type NotificationContext, type NotificationKind } from "../../src/shared/notification-format";
+import { notificationKey } from "../../src/shared/identity";
 
 export type NotifyKind = NotificationKind;
 export type NotifyContext = NotificationContext;
@@ -82,17 +83,33 @@ export async function runNotifications(
     for (const game of games.filter(item => item.status === "active")) {
       for (const kind of ["new", "ending-soon"] as const) {
         if (!shouldNotify(game, kind, now)) continue;
-        initial[`${game.id}:${kind}`] = notifiers.map(notifier => notifier.name);
+        initial[notificationKey(game, kind)] = notifiers.map(notifier => notifier.name);
       }
     }
     await writeNotifiedFile(initial, statePath);
     return { initialized: true, attempts: 0 };
   }
 
-  // Recurring offers may reuse an ID; a new active transition starts a fresh cycle.
-  for (const id of options.newlyActiveIds ?? []) {
-    delete state[`${id}:new`];
-    delete state[`${id}:ending-soon`];
+  // Migrate old ID-only records to the current period. A detected recurring
+  // transition must not inherit the previous period's delivery record.
+  const newlyActiveIds = new Set(options.newlyActiveIds ?? []);
+  for (const game of games) {
+    if (game.startAt === null || newlyActiveIds.has(game.id)) continue;
+    for (const kind of ["new", "ending-soon"] as const) {
+      const oldKey = `${game.id}:${kind}`;
+      const currentKey = notificationKey(game, kind);
+      if (state[oldKey]) {
+        if (!state[currentKey]) state[currentKey] = state[oldKey];
+        delete state[oldKey];
+      }
+    }
+  }
+  // A legacy key has no period information. On a detected recurring transition,
+  // discard it once so it cannot be mistaken for the new period on the next run.
+  for (const game of games) {
+    if (game.startAt === null || !newlyActiveIds.has(game.id)) continue;
+    delete state[`${game.id}:new`];
+    delete state[`${game.id}:ending-soon`];
   }
 
   let attempts = 0;
@@ -105,7 +122,7 @@ export async function runNotifications(
   const offset = candidates.length ? (Math.floor(now.getTime() / (6 * 60 * 60 * 1000)) * MAX_PER_CHANNEL) % candidates.length : 0;
   const ordered = candidates.slice(offset).concat(candidates.slice(0, offset));
   for (const { game, kind } of ordered) {
-      const key = `${game.id}:${kind}`;
+      const key = notificationKey(game, kind);
       const sent = new Set(state[key] ?? []);
       for (const notifier of notifiers) {
         if (sent.has(notifier.name) || !matchesFilters(game, notifier.name, env) || (counts.get(notifier.name) ?? 0) >= MAX_PER_CHANNEL) continue;

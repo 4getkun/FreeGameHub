@@ -90,7 +90,7 @@ describe("notifier registry and delivery", () => {
     const initial = await runNotifications([game()], contexts, {}, { statePath, now, notifiers: [notifier] });
     expect(initial).toEqual({ initialized: true, attempts: 0 });
     expect(send).not.toHaveBeenCalled();
-    expect(await readNotifiedFile(statePath)).toEqual({ "epic:one:new": ["test"] });
+    expect(await readNotifiedFile(statePath)).toEqual({ "epic:one@2026-11-07T00:00:00Z:new": ["test"] });
 
     const next = game({ id: "steam:two", title: "Two", store: "steam", source: "gamerpower" });
     await runNotifications([game(), next], contexts, {}, { statePath, now, notifiers: [notifier] });
@@ -144,6 +144,65 @@ describe("notifier registry and delivery", () => {
     expect(send).toHaveBeenCalledTimes(1);
   });
 
+  it("uses a fresh notification key for each start period and migrates legacy records", async () => {
+    const statePath = join(await tempDir(), "notified.json");
+    await writeFile(statePath, JSON.stringify({ "epic:one:new": ["test"] }));
+    const send = vi.fn<Notifier["send"]>(async () => {});
+    const notifier = channel("test", send);
+    await runNotifications([game()], contexts, {}, { statePath, now, notifiers: [notifier] });
+    expect(send).not.toHaveBeenCalled();
+
+    const nextPeriod = game({ startAt: "2026-11-08T00:00:00Z", endAt: "2026-11-08T12:00:00Z" });
+    await runNotifications([nextPeriod], contexts, {}, { statePath, now, notifiers: [notifier], newlyActiveIds: ["epic:one"] });
+    expect(send).toHaveBeenCalledTimes(2);
+    expect(send.mock.calls.map(([, kind]) => kind)).toEqual(["new", "ending-soon"]);
+    const state = await readNotifiedFile(statePath);
+    expect(state?.["epic:one@2026-11-08T00:00:00Z:new"]).toEqual(["test"]);
+    expect(state?.["epic:one@2026-11-08T00:00:00Z:ending-soon"]).toEqual(["test"]);
+  });
+
+  it("does not reuse legacy successes after a new period fails, and retries only that period's failures", async () => {
+    const statePath = join(await tempDir(), "notified.json");
+    await writeFile(statePath, JSON.stringify({ "epic:one:new": ["healthy"] }));
+    const failedFirst = vi.fn<Notifier["send"]>().mockRejectedValueOnce(new Error("offline")).mockResolvedValue(undefined);
+    const failedSecond = vi.fn<Notifier["send"]>().mockRejectedValueOnce(new Error("offline")).mockResolvedValue(undefined);
+    const notifiers = [channel("flaky", failedFirst), channel("healthy", failedSecond)];
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const nextPeriod = game({ startAt: "2026-11-08T00:00:00Z" });
+
+    await runNotifications([nextPeriod], contexts, {}, {
+      statePath, now, notifiers, newlyActiveIds: ["epic:one"]
+    });
+    expect(failedFirst).toHaveBeenCalledTimes(1);
+    expect(failedSecond).toHaveBeenCalledTimes(1);
+    expect(await readNotifiedFile(statePath)).not.toHaveProperty("epic:one:new");
+
+    await runNotifications([nextPeriod], contexts, {}, { statePath, now, notifiers });
+    expect(failedFirst).toHaveBeenCalledTimes(2);
+    expect(failedSecond).toHaveBeenCalledTimes(2);
+    expect((await readNotifiedFile(statePath))?.["epic:one@2026-11-08T00:00:00Z:new"]).toEqual(["flaky", "healthy"]);
+  });
+
+  it("keeps ID-only notification keys when startAt is null", async () => {
+    const statePath = join(await tempDir(), "notified.json");
+    await writeFile(statePath, "{}\n");
+    const send = vi.fn<Notifier["send"]>(async () => {});
+    await runNotifications([game({ startAt: null })], contexts, {}, { statePath, now, notifiers: [channel("test", send)] });
+    expect(await readNotifiedFile(statePath)).toEqual({ "epic:one:new": ["test"] });
+  });
+
+  it("preserves an already notified null-start offer even when its ID is marked newly active", async () => {
+    const statePath = join(await tempDir(), "notified.json");
+    await writeFile(statePath, JSON.stringify({ "epic:one:new": ["test"] }));
+    const send = vi.fn<Notifier["send"]>(async () => {});
+    const noStart = game({ startAt: null });
+    await runNotifications([noStart], contexts, {}, {
+      statePath, now, notifiers: [channel("test", send)], newlyActiveIds: ["epic:one"]
+    });
+    expect(send).not.toHaveBeenCalled();
+    expect(await readNotifiedFile(statePath)).toEqual({ "epic:one:new": ["test"] });
+  });
+
   it("applies channel store/type filters and limits each channel to ten sends", async () => {
     const statePath = join(await tempDir(), "notified.json");
     await writeFile(statePath, "{}\n");
@@ -172,6 +231,6 @@ describe("notifier registry and delivery", () => {
     expect(first.attempts).toBe(10);
     expect(second.attempts).toBe(10);
     expect(send).toHaveBeenCalledTimes(20);
-    expect((await readNotifiedFile(statePath))?.["steam:10:new"]).toEqual(["test"]);
+    expect((await readNotifiedFile(statePath))?.["steam:10@2026-11-07T00:00:00Z:new"]).toEqual(["test"]);
   });
 });

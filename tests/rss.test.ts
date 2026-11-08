@@ -22,7 +22,7 @@ describe("RSS output", () => {
     expect(validateRssFeed(feeds["all.xml"].replace(/\n/g, "\r\n"))).toBe(true);
     expect(feeds["all.xml"]).toContain("<rss version=\"2.0\">");
     expect(feeds["all.xml"]).toContain("<title>[DLC] A &lt; B</title>");
-    expect(feeds["all.xml"]).toContain("<guid isPermaLink=\"false\">epic:dlc&amp;one</guid>");
+    expect(feeds["all.xml"]).toContain("<guid isPermaLink=\"false\">epic:dlc&amp;one@2026-11-08T00:00:00Z</guid>");
     expect(feeds["all.xml"]).toContain("https://store.example/a?x=1&amp;y=2");
     expect(feeds["all.xml"]).toContain("&lt;script&gt;&amp; test");
     expect(feeds["all.xml"]).not.toContain("steam:upcoming");
@@ -44,6 +44,18 @@ describe("RSS output", () => {
     expect(afterEnd["all.xml"]).toContain("epic:dlc&amp;one");
     expect((afterEnd["all.xml"].match(/<item>/g) ?? [])).toHaveLength(1);
     expect(validateRssFeed(afterEnd["all.xml"])).toBe(true);
+  });
+
+  it("uses ID-only GUIDs for unknown starts and appends a recurring period beside legacy history", () => {
+    const nullStart = game({ id: "epic:unknown", startAt: null });
+    const initial = generateRssFeeds([nullStart], { siteUrl: "https://site.example/" });
+    expect(initial["all.xml"]).toContain('<guid isPermaLink="false">epic:unknown</guid>');
+
+    const old = initial["all.xml"].replace("epic:unknown", "epic:recurring");
+    const recurring = game({ id: "epic:recurring", startAt: "2026-11-08T00:00:00Z" });
+    const result = generateRssFeeds([recurring], { siteUrl: "https://site.example/", existingFeeds: { "all.xml": old } });
+    expect((result["all.xml"].match(/<item>/g) ?? [])).toHaveLength(2);
+    expect(result["all.xml"]).toContain("epic:recurring@2026-11-08T00:00:00Z");
   });
 
   it("requires an explicit channel URL", () => {

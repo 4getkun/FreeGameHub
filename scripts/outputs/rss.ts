@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import type { Game, GamesFile, Store } from "../../src/shared/types";
+import { distributionIdentity } from "../../src/shared/identity";
 
 const STORES: Store[] = ["epic", "steam", "gog", "itch", "prime", "other"];
 const TYPE_LABELS: Record<Game["type"], string> = {
@@ -20,7 +21,7 @@ function itemXml(game: Game): string {
     "    <item>",
     `      <title>${xml(title)}</title>`,
     `      <link>${xml(game.url)}</link>`,
-    `      <guid isPermaLink="false">${xml(game.id)}</guid>`,
+    `      <guid isPermaLink="false">${xml(distributionIdentity(game))}</guid>`,
     `      <description>${xml(description)}</description>`,
     `      <category>${xml(game.type)}</category>`,
     game.startAt ? `      <pubDate>${new Date(game.startAt).toUTCString()}</pubDate>` : "",
@@ -56,10 +57,19 @@ function mergeFeed(title: string, siteUrl: string, existing: string | undefined,
   }
   const ids = new Set(oldItems.flatMap(item => {
     const match = item.match(/<guid isPermaLink="false">([\s\S]*?)<\/guid>/);
-    return match ? [decodeXml(match[1])] : [];
+    if (!match) return [];
+    const guid = decodeXml(match[1]);
+    // Older feeds used only the game ID. Recover the period from pubDate where possible,
+    // while retaining truly date-less legacy entries as their original ID.
+    if (!guid.includes("@")) {
+      const pubDate = item.match(/<pubDate>([\s\S]*?)<\/pubDate>/)?.[1];
+      const timestamp = pubDate ? Date.parse(decodeXml(pubDate)) : NaN;
+      return [Number.isNaN(timestamp) ? guid : `${guid}@${new Date(timestamp).toISOString()}`];
+    }
+    return [guid];
   }));
-  const additions = games.filter(game => game.status === "active" && !ids.has(game.id))
-    .filter((game, index, active) => active.findIndex(candidate => candidate.id === game.id) === index)
+  const additions = games.filter(game => game.status === "active" && !ids.has(distributionIdentity(game)))
+    .filter((game, index, active) => active.findIndex(candidate => distributionIdentity(candidate) === distributionIdentity(game)) === index)
     .map(itemXml);
   if (!existing) return feedXml(title, siteUrl, additions);
   // Normalize indentation so re-reading and writing an unchanged feed is byte-for-byte stable.

@@ -113,6 +113,7 @@ describe("P4 update runner", () => {
     const statePath = join(root, "notified.json");
     const recurring = game({ id: "epic:recurring", title: "Recurring", status: "active", startAt: "2026-11-01T00:00:00Z" });
     await writeGamesFile([recurring], gamesPath, now);
+    await writeRssFeeds([recurring], { outputDir: feedsDir, siteUrl: "https://site.example/" });
     await writeFile(statePath, JSON.stringify({ "epic:recurring:new": ["test", "healthy"], "epic:recurring:ending-soon": ["test", "healthy"] }));
     const send = vi.fn<Notifier["send"]>().mockRejectedValueOnce(new Error("offline")).mockResolvedValue(undefined);
     const healthySend = vi.fn<Notifier["send"]>(async () => {});
@@ -129,14 +130,18 @@ describe("P4 update runner", () => {
     expect(healthySend).not.toHaveBeenCalled();
     startAt = "2026-11-08T00:00:00Z";
     await run();
+    const feed = await readFile(join(feedsDir, "all.xml"), "utf8");
+    expect((feed.match(/<item>/g) ?? [])).toHaveLength(2);
+    expect(feed).toContain("epic:recurring@2026-11-01T00:00:00Z");
+    expect(feed).toContain("epic:recurring@2026-11-08T00:00:00Z");
     expect(send).toHaveBeenCalledTimes(1);
     expect(healthySend).toHaveBeenCalledTimes(1);
-    expect(JSON.parse(await readFile(statePath, "utf8"))["epic:recurring:new"]).toEqual(["healthy"]);
-    expect(JSON.parse(await readFile(statePath, "utf8"))).not.toHaveProperty("epic:recurring:ending-soon");
+    expect(JSON.parse(await readFile(statePath, "utf8"))["epic:recurring@2026-11-08T00:00:00Z:new"]).toEqual(["healthy"]);
+    expect(JSON.parse(await readFile(statePath, "utf8"))).not.toHaveProperty("epic:recurring@2026-11-08T00:00:00Z:ending-soon");
     await run();
     expect(send).toHaveBeenCalledTimes(2);
     expect(healthySend).toHaveBeenCalledTimes(1);
-    expect(JSON.parse(await readFile(statePath, "utf8"))["epic:recurring:new"]).toEqual(["healthy", "test"]);
+    expect(JSON.parse(await readFile(statePath, "utf8"))["epic:recurring@2026-11-08T00:00:00Z:new"]).toEqual(["healthy", "test"]);
     await run();
     expect(send).toHaveBeenCalledTimes(2);
     expect(healthySend).toHaveBeenCalledTimes(1);
@@ -206,7 +211,7 @@ describe("P4 update runner", () => {
     });
     expect(first.dataChanged).toBe(true);
     expect(send).not.toHaveBeenCalled();
-    expect(await readFile(statePath, "utf8")).toContain("epic:old:new");
+    expect(await readFile(statePath, "utf8")).toContain("epic:old@2026-11-01T00:00:00Z:new");
 
     await runUpdate({
       now, gamesPath, feedsDir, statePath, siteUrl: "https://site.example/", env: {}, notifiers: [notifier],
