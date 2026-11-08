@@ -93,3 +93,19 @@ body { @apply bg-bg font-japan text-text antialiased; }
   .game-section[data-section="upcoming"] .game-card__countdown, .game-section[data-section="upcoming"] .game-card__worth,
   .game-section[data-section="upcoming"] .game-card__summary, .game-section[data-section="upcoming"] .game-card__claimed-label { @apply col-start-2 pt-1; }
 }
+
+.upcoming-preview { @apply col-span-full grid grid-cols-1 gap-3 rounded-card border border-dashed border-line bg-surface-2 p-4 sm:grid-cols-2 lg:col-span-3 lg:grid-cols-3; }
+.upcoming-preview__heading { @apply col-span-full text-[13px] font-bold text-accent-text; }
+.upcoming-preview__card { @apply min-w-0 rounded-input border border-line bg-surface px-4 py-3; }
+.upcoming-preview__title { @apply text-sm font-bold leading-snug text-text; overflow-wrap: anywhere; }
+.upcoming-preview__start { @apply mt-2 font-space-grotesk text-[12px] font-semibold tabular-nums text-dim; }
+::view-transition-old(root), ::view-transition-new(root) {
+  animation-duration: 150ms;
+  animation-timing-function: ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+}
+
+.game-card__start { @apply px-4 pt-2 font-space-grotesk text-[13px] font-semibold tabular-nums text-dim; }
+@media (min-width: 768px) { .game-section[data-section="upcoming"] .game-card__start { @apply col-start-2 pt-1; } }

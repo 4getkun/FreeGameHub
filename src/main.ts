@@ -4,6 +4,7 @@ import "./styles/components.css";
 import { gamesFileSchema } from "./shared/schema";
 import { claimedIds, readState, saveClaimed, writeState } from "./ui/state";
 import { render } from "./ui/render";
+import { transitionFilters } from "./ui/transitions";
 import { updateCountdowns } from "./ui/countdown";
 import type { Game } from "./shared/types";
 
@@ -38,15 +39,18 @@ root.addEventListener("change", event => {
   if (!(target instanceof HTMLInputElement || target instanceof HTMLSelectElement)) return;
   if (target instanceof HTMLInputElement && target.dataset.claimedId) {
     const ids = claimedIds(); if (target.checked) ids.add(target.dataset.claimedId); else ids.delete(target.dataset.claimedId); saveClaimed(ids);
+    writeState(state);
+    redraw();
+    return;
   } else if (target instanceof HTMLInputElement && target.dataset.filter === "hide-claimed") state = { ...state, hideClaimed: target.checked };
   else if (target instanceof HTMLSelectElement && target.dataset.filter === "store") state = { ...state, store: target.value as typeof state.store };
   else return;
-  writeState(state); redraw();
+  writeState(state); transitionFilters(redraw);
 });
 root.addEventListener("click", event => {
   const button = (event.target as Element | null)?.closest<HTMLButtonElement>("[data-type]");
   if (!button) return;
-  state = { ...state, type: button.dataset.type as typeof state.type }; writeState(state); redraw();
+  state = { ...state, type: button.dataset.type as typeof state.type }; writeState(state); transitionFilters(redraw);
 });
-window.addEventListener("popstate", () => { state = readState(location.search); redraw(); });
+window.addEventListener("popstate", () => { state = readState(location.search); transitionFilters(redraw); });
 void start();

@@ -1,5 +1,6 @@
 import type { Game, Status } from "../shared/types";
 import type { UiState } from "./state";
+import { formatStart } from "./start-time";
 
 export type CardState = Status | "ending";
 export const sections: Array<{ status: CardState; title: string }> = [
@@ -16,6 +17,7 @@ export function makeCard(game: Game, claimed: boolean, status: CardState, end: {
   if (url) { const link = element("a", "game-card__link", game.title); link.href = url; link.rel = "noopener noreferrer"; title.append(link); } else title.textContent = game.title;
   if (game.imageUrl && safeHttpUrl(game.imageUrl)) { const img = element("img", "game-card__image"); img.src = safeHttpUrl(game.imageUrl)!; img.alt = ""; img.loading = "lazy"; card.append(img); }
   card.append(title, element("p", "game-card__store", game.store), element("p", "game-card__type", typeLabel(game.type)), element("p", "game-card__end", end.text));
+  if (status === "upcoming") card.append(element("p", "game-card__start", formatStart(game.startAt)));
   if (end.imminent) card.append(element("p", "game-card__imminent", "まもなく"));
   if (end.countdown) { const countdown = element("p", "game-card__countdown", end.countdown); countdown.dataset.countdown = game.endAt ?? ""; card.append(countdown); }
   if (game.worthUsd !== null) card.append(element("p", "game-card__worth", `通常価格相当 $${game.worthUsd}`));
