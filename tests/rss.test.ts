@@ -35,6 +35,8 @@ describe("RSS output", () => {
   it("preserves ended history and avoids duplicate GUIDs on repeated runs", () => {
     const first = generateRssFeeds([game()], { siteUrl: "https://site.example/" });
     const repeated = generateRssFeeds([game()], { siteUrl: "https://site.example/", existingFeeds: first });
+    const again = generateRssFeeds([], { siteUrl: "https://site.example/", existingFeeds: repeated });
+    expect(again).toEqual(repeated);
     expect((repeated["all.xml"].match(/<guid isPermaLink=/g) ?? [])).toHaveLength(1);
     const afterEnd = generateRssFeeds([game({ status: "ended" })], {
       siteUrl: "https://site.example/", existingFeeds: repeated

@@ -50,7 +50,7 @@ function decodeXml(value: string): string {
 }
 
 function mergeFeed(title: string, siteUrl: string, existing: string | undefined, games: Game[]): string {
-  const oldItems = existing?.match(/\s*<item>[\s\S]*?<\/item>/g) ?? [];
+  const oldItems = existing?.match(/<item>[\s\S]*?<\/item>/g) ?? [];
   if (existing && (!validateRssFeed(existing) || (existing.match(/<item>/g)?.length ?? 0) !== oldItems.length)) {
     throw new Error(`Invalid existing RSS feed: ${title}`);
   }
@@ -62,7 +62,8 @@ function mergeFeed(title: string, siteUrl: string, existing: string | undefined,
     .filter((game, index, active) => active.findIndex(candidate => candidate.id === game.id) === index)
     .map(itemXml);
   if (!existing) return feedXml(title, siteUrl, additions);
-  const retained = oldItems.map(item => item.trimEnd());
+  // Normalize indentation so re-reading and writing an unchanged feed is byte-for-byte stable.
+  const retained = oldItems.map(item => `    ${item.trim()}`);
   const items = [...retained, ...additions];
   return [
     '<?xml version="1.0" encoding="UTF-8"?>', '<rss version="2.0">', "  <channel>",
