@@ -17,6 +17,14 @@ Pages はコミットを受けてビルドし、`dist` の内容を公開しま�
 
 手動起動の定義はありますが、P4 の受入条件である実際の手動実行と結果確認は未確認です。workflow の `environment: production` は設定されていますが、現在の private リポジトリ／GitHub Free で Environment の保護・Secrets が利用でき、強制されるかは未確認です。GitHub の公式仕様では private リポジトリの Environment secrets 利用に Pro、Team または Enterprise が必要とされています。将来登録する Secrets は `production` Environment 用とし、リポジトリ Secrets には登録しないでください。利用可否が確認できるまで秘密値を登録しないでください。[Workflow の手動実行](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-running-a-workflow) · [Environments の利用条件](https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments) · [Environment secrets](https://docs.github.com/en/actions/concepts/security/secrets)
 
+## Secrets を登録する前のチェックリスト
+
+1. リポジトリを public にし、その時点で Git 履歴を再検査する。
+2. `production` Environment の `main` 限定ルールが実際に強制されることを確認する。public リポジトリでは無料で保護設定を利用できる。
+3. その後で初めて、必要な Secrets を `production` Environment に登録する。
+
+**Environment 保護の実効性は、private リポジトリでは未確認。Secrets の登録前に必ず確認すること。**
+
 ## Groq による紹介文の生成
 
 GitHub のリポジトリで **Settings → Environments → production → Add secret** を開き、`GROQ_API_KEY` を登録します。キーは [Groq Console の API Keys](https://console.groq.com/keys) で作成します。`GROQ_MODEL` は任意の Environment variable (`vars`) で、未設定時は `config.json` の `groqModel` を使います。初期値のモデル ID は `openai/gpt-oss-120b` です。キー未設定時は要約処理を省略します。[Groq Quickstart](https://console.groq.com/docs/quickstart)
