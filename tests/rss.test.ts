@@ -19,6 +19,7 @@ describe("RSS output", () => {
     ], { siteUrl: "https://site.example/" });
     expect(Object.keys(feeds)).toEqual(["all.xml", "epic.xml", "steam.xml", "gog.xml", "itch.xml", "prime.xml", "other.xml"]);
     expect(Object.values(feeds).every(validateRssFeed)).toBe(true);
+    expect(validateRssFeed(feeds["all.xml"].replace(/\n/g, "\r\n"))).toBe(true);
     expect(feeds["all.xml"]).toContain("<rss version=\"2.0\">");
     expect(feeds["all.xml"]).toContain("<title>[DLC] A &lt; B</title>");
     expect(feeds["all.xml"]).toContain("<guid isPermaLink=\"false\">epic:dlc&amp;one</guid>");

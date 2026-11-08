@@ -91,6 +91,7 @@ export function generateRssFeeds(
 
 /** Performs basic structural and contract checks on a generated RSS feed. */
 export function validateRssFeed(feed: string): boolean {
+  feed = feed.replace(/\r\n/g, "\n");
   return /^<\?xml version="1\.0" encoding="UTF-8"\?>\n<rss version="2\.0">[\s\S]*<channel>[\s\S]*<\/channel>\n<\/rss>\n$/.test(feed) &&
     (feed.match(/<item>/g)?.length ?? 0) === (feed.match(/<guid isPermaLink="false">/g)?.length ?? 0);
 }
