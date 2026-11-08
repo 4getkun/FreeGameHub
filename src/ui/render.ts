@@ -1,5 +1,7 @@
 import { formatEnd, isWithinRecentHistory } from "../shared/format";
 import { computeStatus } from "../shared/status";
+import { orderByEndAt, orderByStartAt } from "./ordering";
+import { formatStart } from "./start-time";
 import type { Game, Status } from "../shared/types";
 import { claimedIds } from "./state";
 import type { UiState } from "./state";
@@ -22,8 +24,26 @@ export function render(root: HTMLElement, games: Game[], state: UiState, now = n
   for (const section of sections) {
     const group = element("section", "game-section"); group.dataset.section = section.status;
     group.append(element("h2", "game-section__title", section.title)); const list = element("div", "game-section__games");
-    for (const game of buckets.get(section.status)!) list.append(makeCard(game, claimed.has(game.id), section.status, formatEnd(game, now)));
-    if (!list.childElementCount) list.append(element("p", "game-section__empty", "該当するゲームはありません。"));
+    const ordered = section.status === "ending" ? orderByEndAt(buckets.get(section.status)!) : buckets.get(section.status)!;
+    for (const game of ordered) list.append(makeCard(game, claimed.has(game.id), section.status, formatEnd(game, now)));
+    if (!ordered.length) list.append(element("p", "game-section__empty", emptyMessage(section.status)));
+    if (section.status === "active") {
+      const upcoming = orderByStartAt(buckets.get("upcoming")!);
+      if (upcoming.length) {
+        const previews = element("div", "upcoming-preview"); previews.setAttribute("aria-label", "配布予定のプレビュー");
+        previews.append(element("h3", "upcoming-preview__heading", "次回予告"));
+        for (const game of upcoming) {
+          const preview = element("article", "upcoming-preview__card");
+          preview.append(element("h3", "upcoming-preview__title", game.title), element("p", "upcoming-preview__start", formatStart(game.startAt)));
+          previews.append(preview);
+        }
+        list.append(previews);
+      }
+    }
     group.append(list); root.append(group);
   }
+}
+
+function emptyMessage(status: string): string {
+  return ({ active: "いまは配布中のゲームがありません。", ending: "終了が近いゲームはありません。", upcoming: "配布予定のゲームはありません。", ended: "直近30日以内に終了したゲームはありません。" } as Record<string, string>)[status] ?? "該当するゲームはありません。";
 }

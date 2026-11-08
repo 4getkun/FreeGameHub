@@ -1,2 +1,35 @@
 import type { Config } from "tailwindcss";
-export default { content: ["./index.html", "./src/**/*.ts"], theme: { extend: { colors: { surface: "rgb(var(--color-surface) / <alpha-value>)", text: "rgb(var(--color-text) / <alpha-value>)" } } }, plugins: [] } satisfies Config;
+export default { content: ["./index.html", "./src/**/*.ts"], theme: { extend: {
+      colors: {
+        bg: "rgb(var(--color-bg) / <alpha-value>)",
+        surface: "rgb(var(--color-surface) / <alpha-value>)",
+        "surface-2": "rgb(var(--color-surface-2) / <alpha-value>)",
+        line: "rgb(var(--color-line) / <alpha-value>)",
+        text: "rgb(var(--color-text) / <alpha-value>)",
+        dim: "rgb(var(--color-dim) / <alpha-value>)",
+        accent: "rgb(var(--color-accent) / <alpha-value>)",
+        "accent-on": "rgb(var(--color-accent-on) / <alpha-value>)",
+        "accent-text": "rgb(var(--color-accent-text) / <alpha-value>)",
+        urgent: "rgb(var(--color-urgent) / <alpha-value>)",
+        "urgent-bg": "rgb(var(--color-urgent-bg) / <alpha-value>)",
+        "urgent-line": "rgb(var(--color-urgent-line) / <alpha-value>)",
+        "ok-bg": "rgb(var(--color-ok-bg) / <alpha-value>)",
+        pattern: "rgb(var(--color-pattern) / <alpha-value>)",
+        "cover-0": "rgb(var(--color-cover-0) / <alpha-value>)",
+        "cover-1": "rgb(var(--color-cover-1) / <alpha-value>)",
+        "cover-2": "rgb(var(--color-cover-2) / <alpha-value>)",
+        "cover-3": "rgb(var(--color-cover-3) / <alpha-value>)",
+        "cover-4": "rgb(var(--color-cover-4) / <alpha-value>)",
+        "cover-5": "rgb(var(--color-cover-5) / <alpha-value>)",
+      },
+      fontFamily: {
+        japan: ["Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Meiryo", "system-ui", "sans-serif"],
+        "space-grotesk": ["Space Grotesk", "sans-serif"],
+      },
+      borderRadius: {
+        card: "16px",
+        button: "10px",
+        chip: "999px",
+        input: "8px",
+      },
+    } }, plugins: [] } satisfies Config;

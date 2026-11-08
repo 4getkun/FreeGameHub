@@ -1,0 +1,39 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><style>
+@font-face{font-family:'SG';src:url('sg700.woff2');font-weight:700}
+@font-face{font-family:'SG';src:url('sg600.woff2');font-weight:600}
+*{box-sizing:border-box}
+body{margin:0;width:1200px;height:630px;background:#0E1014;color:#ECEFF4;font-family:'Noto Sans CJK JP','Noto Sans JP',sans-serif;position:relative;overflow:hidden}
+.pat{position:absolute;inset:0;background-image:linear-gradient(#161A20 1px,transparent 1px),linear-gradient(90deg,#161A20 1px,transparent 1px);background-size:40px 40px;opacity:.7}
+.left{position:absolute;left:72px;top:0;bottom:0;width:560px;display:flex;flex-direction:column;justify-content:center;gap:28px}
+.brand{display:flex;align-items:center;gap:16px}
+.mark{width:56px;height:56px;border-radius:16px;background:#B8F25B;display:flex;align-items:center;justify-content:center}
+.word{font:700 34px/1 'SG',sans-serif;letter-spacing:-0.01em}
+h1{margin:0;font:700 62px/1.25 'Noto Sans CJK JP',sans-serif;letter-spacing:-0.01em}
+h1 em{font-style:normal;color:#B8F25B}
+p{margin:0;font:400 26px/1.7 'Noto Sans CJK JP',sans-serif;color:#A7B0BE}
+.grid{position:absolute;right:64px;top:64px;width:420px;height:502px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1.3fr 1fr 1fr;gap:14px}
+.t{border-radius:20px;border:2px solid #2A303A;background:#161A20;position:relative;overflow:hidden}
+.cov{position:absolute;inset:0;background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.05) 0 12px,transparent 12px 24px)}
+.hero{grid-column:span 2;background:#233047}
+.hero .chip{position:absolute;top:16px;right:16px;padding:8px 14px;border-radius:999px;background:#3A2316;border:2px solid #7A4A2B;color:#FFA066;font:700 18px/1 'Noto Sans CJK JP'}
+.hero .num{position:absolute;left:22px;bottom:18px;font:700 64px/1 'SG',sans-serif;color:#FFA066;letter-spacing:-0.01em;font-variant-numeric:tabular-nums}
+.hero .lab{position:absolute;left:24px;bottom:96px;font:500 18px/1 'Noto Sans CJK JP';color:#A7B0BE}
+.c1{background:#2B2A44}.c2{background:#1F3B3A}.c3{background:#3A3322}
+.t .bar{position:absolute;left:16px;bottom:16px;width:56%;height:10px;border-radius:5px;background:rgba(236,239,244,.28)}
+.t .bar2{position:absolute;left:16px;bottom:36px;width:34%;height:10px;border-radius:5px;background:#B8F25B}
+.tz{grid-column:span 2;border-style:dashed;background:#1D222A}
+.tz .bar{width:46%}
+</style></head><body>
+<div class="pat"></div>
+<div class="left">
+  <div class="brand"><div class="mark"><svg width="34" height="34" viewBox="0 0 32 32" fill="none" stroke="#0E1014" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="12" width="20" height="5" rx="1.5"/><path d="M8 17v9h16v-9M16 12v14"/><path d="M16 12c-1-4-6-5-6-2s4 2 6 2M16 12c1-4 6-5 6-2s-4 2-6 2"/></svg></div><div class="word">FreeGameHub</div></div>
+  <h1>無料配布ゲームを、<br><em>日本時間</em>で。</h1>
+  <p>Epic・Steam・GOG などの<br>配布中と配布予定を、終了までの<br>カウントダウンつきで。</p>
+</div>
+<div class="grid">
+  <div class="t hero"><div class="cov"></div><span class="chip">まもなく終了</span><span class="lab">終了まで</span><span class="num">08:12:33</span></div>
+  <div class="t c1"><div class="cov"></div><div class="bar2"></div><div class="bar"></div></div>
+  <div class="t c2"><div class="cov"></div><div class="bar2"></div><div class="bar"></div></div>
+  <div class="t tz"><div class="bar2"></div><div class="bar"></div></div>
+</div>
+</body></html>
