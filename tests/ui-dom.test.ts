@@ -50,6 +50,41 @@ describe("UI DOM rendering", () => {
     expect(Array.from(root.querySelectorAll(".game-card__title")).map(node => node.textContent)).toEqual(["epic-loot"]);
   });
 
+  it("shows upcoming previews in the active grid with JST starts and section-specific empty text", () => {
+    const root = document.createElement("main");
+    const games = [
+      game("future-later", { startAt: "2026-11-10T00:00:00Z", endAt: "2026-11-20T00:00:00Z", status: "upcoming" }),
+      game("future-soon", { startAt: "2026-11-09T15:30:00Z", endAt: "2026-11-15T00:00:00Z", status: "upcoming" }),
+    ];
+    render(root, games, uiState, fixedNow);
+    const preview = root.querySelector<HTMLElement>('[data-section="active"] .upcoming-preview')!;
+    expect(preview.children).toHaveLength(3);
+    expect(preview.querySelector(".upcoming-preview__heading")?.textContent).toBe("次回予告");
+    expect(Array.from(preview.querySelectorAll(".upcoming-preview__title"), node => node.textContent)).toEqual(["future-soon", "future-later"]);
+    expect(preview.querySelector(".upcoming-preview__start")?.textContent).toBe("2026/11/10 00:30 開始予定");
+    expect(root.querySelector('[data-section="upcoming"] .game-card__start')?.textContent).toBe("2026/11/10 09:00 開始予定");
+    expect(root.querySelector('[data-section="active"] .game-section__empty')?.textContent).toBe("いまは配布中のゲームがありません。");
+    expect(root.querySelector('[data-section="ending"] .game-section__empty')?.textContent).toBe("終了が近いゲームはありません。");
+    expect(root.querySelector('[data-section="ended"] .game-section__empty')?.textContent).toBe("直近30日以内に終了したゲームはありません。");
+    expect(root.querySelector('[data-section="upcoming"] .game-section__empty')).toBeNull();
+  });
+
+  it("shows the earliest ending game first without reordering the active list", () => {
+    const root = document.createElement("main");
+    render(root, [game("later", { endAt: "2026-11-08T20:00:00Z" }), game("soon", { endAt: "2026-11-08T02:00:00Z" }), game("active-b", {endAt: "2026-11-14T00:00:00Z"}), game("active-a", {endAt:"2026-11-12T00:00:00Z"})], uiState, fixedNow);
+    expect(Array.from(root.querySelectorAll('[data-section="ending"] .game-card__title'), node => node.textContent)).toEqual(["soon", "later"]);
+    expect(Array.from(root.querySelectorAll('[data-section="active"] .game-card__title'), node => node.textContent)).toEqual(["active-b", "active-a"]);
+  });
+
+  it("provides a distinct empty message for each section", () => {
+    const root = document.createElement("main");
+    render(root, [], uiState, fixedNow);
+    expect(Array.from(root.querySelectorAll(".game-section__empty"), node => node.textContent)).toEqual([
+      "いまは配布中のゲームがありません。", "終了が近いゲームはありません。",
+      "配布予定のゲームはありません。", "直近30日以内に終了したゲームはありません。"
+    ]);
+  });
+
   it("wires main change and click events to filters, claimed storage, and shared query", async () => {
     const root = document.createElement("main"); root.dataset.appRoot = ""; document.body.append(root);
     history.replaceState(null, "", "/?store=all&type=all");

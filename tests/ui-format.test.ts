@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { countdownText, formatEnd, isWithinRecentHistory } from "../src/shared/format";
 import { readState } from "../src/ui/state";
+import { orderByEndAt } from "../src/ui/ordering";
 
 describe("site formatting", () => {
   const now = new Date("2026-11-08T00:00:00Z");
@@ -24,5 +25,16 @@ describe("site formatting", () => {
   it("parses shared URL filters and falls back on invalid values", () => {
     expect(readState("?store=epic&type=loot&claimed=hide")).toEqual({ store: "epic", type: "loot", hideClaimed: true });
     expect(readState("?store=bogus&type=bogus")).toEqual({ store: "all", type: "game", hideClaimed: false });
+  });
+  it("orders exact and approximate end dates identically, with stable ties and unknown dates last", () => {
+    const items = [
+      { id: "unknown", endAt: null, endApprox: false },
+      { id: "approx-later", endAt: "2026-11-12T23:59:00Z", endApprox: true },
+      { id: "exact", endAt: "2026-11-09T12:00:00Z", endApprox: false },
+      { id: "approx-same-a", endAt: "2026-11-10T00:00:00Z", endApprox: true },
+      { id: "approx-same-b", endAt: "2026-11-10T00:00:00Z", endApprox: true },
+    ];
+    expect(orderByEndAt(items).map(item => item.id)).toEqual(["exact", "approx-same-a", "approx-same-b", "approx-later", "unknown"]);
+    expect(items.map(item => item.id)).toEqual(["unknown", "approx-later", "exact", "approx-same-a", "approx-same-b"]);
   });
 });
