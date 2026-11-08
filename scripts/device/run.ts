@@ -7,6 +7,7 @@ import puppeteer, { type Browser, type Page } from 'puppeteer-core';
 import { build } from 'vite';
 import { createDeviceFixture } from './fixture';
 import { measureDevicePerformance } from './performance';
+import { assertSmokeResult } from './smoke';
 import type { RecoveryState } from './watchdog';
 
 type Result = { name: string; status: 'pass' | 'fail' | 'skip'; detail: string };
@@ -111,7 +112,7 @@ async function main(): Promise<void> {
   recovery.savedStorage = savedStorage; saveRecovery();
   await page.evaluate(() => localStorage.removeItem('freegamehub:claimed'));
   await page.reload({ waitUntil: 'networkidle0' });
-  await check('接続と基本表示', async () => { assert(await page!.$('[data-app-root] h1'), '見出しがありません'); return '実機 Chrome の新しいタブで表示'; });
+  await check('接続と基本表示', async () => { assertSmokeResult(Boolean(await page!.$('[data-claimed-id="fixture-active"]')), errors, failed); return '実機 Chrome の新しいタブで検証用ゲームを表示'; });
   if (smoke) return;
   await full(page, errors, failed);
 }
@@ -238,8 +239,17 @@ async function full(p: Page, errors: string[], failed: string[]): Promise<void> 
     return '実タッチで外部リンクへ遷移し、端末の戻るボタンで復帰';
   });
   await check('タップ領域', async () => {
+    if (!p.url().startsWith('http://localhost:4173/')) await p.goto('http://localhost:4173/?type=all', { waitUntil: 'networkidle0' });
     const small = await p.evaluate(() => Array.from(document.querySelectorAll('button, select, .game-card__claimed-label, .filters__claimed-label, a')).map(e => ({ label: (e.textContent ?? '').trim().slice(0, 40), w: e.getBoundingClientRect().width, h: e.getBoundingClientRect().height })).filter(x => x.w < 44 || x.h < 44));
     assert(!small.length, JSON.stringify(small.slice(0, 20))); return '主要操作要素が 44 CSS px 以上';
+  });
+  await check('RSS 操作領域', async () => {
+    const links = await p.evaluate(() => Array.from(document.querySelectorAll('.store-feeds__link')).map(e => { const r = e.getBoundingClientRect(); return { label: e.textContent?.trim(), left: r.left, right: r.right, top: r.top, bottom: r.bottom, height: r.height }; }));
+    assert(links.length === 6 && links.every(link => link.height >= 44), JSON.stringify(links));
+    for (let i = 0; i < links.length; i++) for (let j = i + 1; j < links.length; j++) {
+      const a = links[i], b = links[j]; assert(!(a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom), `操作領域が重複: ${a.label}, ${b.label}`);
+    }
+    return JSON.stringify(links.map(({ label, height }) => ({ label, height })));
   });
   await check('アクセシビリティ axe-core', async () => {
     await p.addScriptTag({ path: resolve('node_modules/axe-core/axe.min.js') });
@@ -251,7 +261,7 @@ async function full(p: Page, errors: string[], failed: string[]): Promise<void> 
       violations.push(...found.map(v => ({ theme, ...v })));
     }
     writeFileSync(join(output, 'axe.json'), JSON.stringify(violations, null, 2));
-    assert(!violations.some(v => v.impact === 'critical' || v.impact === 'serious'), JSON.stringify(violations.map(({ theme, id, impact, count }) => ({ theme, id, impact, count })))); return JSON.stringify(violations);
+    assert(!violations.length, JSON.stringify(violations.map(({ theme, id, impact, count }) => ({ theme, id, impact, count })))); return JSON.stringify(violations);
   });
   await check('文字コントラスト 4.5:1', async () => {
     await p.evaluate('globalThis.__name = (value) => value');
@@ -319,14 +329,17 @@ async function full(p: Page, errors: string[], failed: string[]): Promise<void> 
   });
 }
 async function cleanup(): Promise<void> {
+  let preserveRecoveryAccess = false;
   if (page) {
-    try { if (savedStorage !== undefined) { if (!page.url().startsWith('http://localhost:4173/')) await page.goto('http://localhost:4173/', { waitUntil: 'domcontentloaded', timeout: 10_000 }); await page.evaluate(value => value === null ? localStorage.removeItem('freegamehub:claimed') : localStorage.setItem('freegamehub:claimed', value), savedStorage); } } catch { record('localStorage 復元', 'fail', '復元できませんでした'); }
-    try { await page.close(); } catch { /* already closed */ }
+    try { if (savedStorage !== undefined) { if (!page.url().startsWith('http://localhost:4173/')) await page.goto('http://localhost:4173/', { waitUntil: 'domcontentloaded', timeout: 10_000 }); await page.evaluate(value => value === null ? localStorage.removeItem('freegamehub:claimed') : localStorage.setItem('freegamehub:claimed', value), savedStorage); } } catch { preserveRecoveryAccess = true; record('localStorage 復元', 'fail', '復旧プロセスで再試行します'); }
+    if (!preserveRecoveryAccess) try { await page.close(); } catch { /* already closed */ }
   }
   try { browser?.disconnect(); } catch { record('Chrome 接続解除', 'fail', '解除できませんでした'); }
-  if (reverse) try { device('reverse', '--remove', 'tcp:4173'); } catch { record('reverse 解除', 'fail', '解除できませんでした'); }
-  if (forward) try { device('forward', '--remove', 'tcp:9222'); } catch { record('forward 解除', 'fail', '解除できませんでした'); }
-  server?.kill();
+  if (!preserveRecoveryAccess) {
+    if (reverse) try { device('reverse', '--remove', 'tcp:4173'); } catch { record('reverse 解除', 'fail', '解除できませんでした'); }
+    if (forward) try { device('forward', '--remove', 'tcp:9222'); } catch { record('forward 解除', 'fail', '解除できませんでした'); }
+    server?.kill();
+  }
   if (before.night) {
     try { if (settingsChanged) restore(); after = snapshot(); record('端末設定の復元', JSON.stringify(before) === JSON.stringify(after) ? 'pass' : 'fail', JSON.stringify(before) === JSON.stringify(after) ? '実行前後が一致' : '実行前後が一致しません'); }
     catch (error) { record('端末設定の復元', 'fail', error instanceof Error ? error.message : String(error)); }
