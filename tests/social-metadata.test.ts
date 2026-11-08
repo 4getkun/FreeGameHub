@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
-import { readFile } from "node:fs/promises";
-import { createServer } from "vite";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { build, createServer } from "vite";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { socialMetadataPlugin, socialUrlTags } from "../vite.config";
 
@@ -20,7 +22,7 @@ describe("social metadata", () => {
   it("omits URL-dependent tags without SITE_URL and retains the static metadata", async () => {
     vi.stubEnv("SITE_URL", "");
     const doc = await renderedHead();
-    for (const selector of ['meta[property="og:image"]', 'meta[property="og:url"]', 'meta[name="twitter:image"]']) {
+    for (const selector of ['meta[property="og:image"]', 'meta[property="og:url"]', 'meta[name="twitter:image"]', 'link[rel="canonical"]']) {
       expect(doc.head.querySelector(selector)).toBeNull();
     }
     expect(doc.head.querySelector('meta[property="og:title"]')?.getAttribute("content")).toContain("FreeGameHub");
@@ -37,6 +39,7 @@ describe("social metadata", () => {
     vi.stubEnv("SITE_URL", "https://example.test/path/?a=1&b=2");
     const doc = await renderedHead();
     expect(doc.head.querySelector('meta[property="og:url"]')?.getAttribute("content")).toBe("https://example.test/path/?a=1&b=2");
+    expect(doc.head.querySelector('link[rel="canonical"]')?.getAttribute("href")).toBe("https://example.test/path/?a=1&b=2");
     expect(doc.head.querySelector('meta[property="og:image"]')?.getAttribute("content")).toBe("https://example.test/og.png");
     expect(doc.head.querySelector('meta[name="twitter:image"]')?.getAttribute("content")).toBe("https://example.test/og.png");
   });
@@ -44,6 +47,19 @@ describe("social metadata", () => {
   it("rejects invalid, non-HTTP and credential-bearing site URLs", () => {
     for (const url of ["/relative", "javascript:alert(1)", "https://user:password@example.test/"]) {
       expect(() => socialUrlTags(url)).toThrow(/SITE_URL/);
+    }
+  });
+
+  it("emits an XML sitemap and advertises it in robots.txt when SITE_URL is set", async () => {
+    vi.stubEnv("SITE_URL", "https://example.test/?a=1&b=2");
+    const outDir = await mkdtemp(join(tmpdir(), "freegamehub-seo-"));
+    try {
+      await build({ configFile: false, plugins: [socialMetadataPlugin()], build: { outDir, emptyOutDir: true }, logLevel: "silent" });
+      const xml = await readFile(join(outDir, "sitemap.xml"), "utf8");
+      expect(new DOMParser().parseFromString(xml, "application/xml").querySelector("loc")?.textContent).toBe("https://example.test/?a=1&b=2");
+      expect(await readFile(join(outDir, "robots.txt"), "utf8")).toContain("Sitemap: https://example.test/sitemap.xml");
+    } finally {
+      await rm(outDir, { recursive: true, force: true });
     }
   });
 });

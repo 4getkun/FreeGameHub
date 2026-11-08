@@ -26,7 +26,7 @@ P4 の手動実行は確認済みです。更新を [run 42482039934](https://gi
 3. `production` Environment の `main` 限定ルールが実際に強制されることを確認する。public リポジトリでは無料で保護設定を利用できる。
 4. その後で初めて、必要な Secrets を `production` Environment に登録する。
 5. 上記の Cloudflare Pages の設定に従い、リポジトリを Pages に連携する。
-6. Pages のビルド環境変数 `SITE_URL` に公開サイトの絶対 URL を設定する。未設定の場合、OG・Twitter の画像 URL と OG のページ URL は出力されない。
+6. Pages のビルド環境変数 `SITE_URL` に公開サイトの絶対 URL を設定する。canonical、OG・Twitter の URL と sitemap はこの値から生成する。未設定の場合、これらの URL と sitemap は出力されない。
 
 **Environment 保護の実効性は、private リポジトリでは未確認。Secrets の登録前に必ず確認すること。**
 
