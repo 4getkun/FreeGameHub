@@ -76,3 +76,22 @@ GitHub のリポジトリで **Settings → Environments → production → Add 
 - Secret: `MASTODON_ACCESS_TOKEN`（必須）
 - Variables: `MASTODON_BASE_URL`（必須。利用するインスタンスのベース URL）、`MASTODON_STORES`, `MASTODON_TYPES`（任意）
 - 取得: 利用インスタンスのアプリ設定でアプリを登録し、投稿用の権限を付けたユーザーアクセストークンを取得します。インスタンスの URL とトークンをそれぞれ設定します。[Mastodon: Obtaining client app access](https://docs.joinmastodon.org/client/token/) · [Mastodon OAuth](https://docs.joinmastodon.org/client/authorized/)
+
+## Android 実機テスト
+
+USB デバッグに対応した Android 端末を USB で接続し、端末側で USB デバッグを有効にします。初回接続時は端末に表示される USB デバッグ許可ダイアログを確認し、この PC からの接続を許可してください。テスト中は端末の画面を点灯したままにし、画面ロックを解除しておきます。画面消灯やロック状態では操作・画面確認が失敗することがあります。
+
+リポジトリのルートで次を実行します。
+
+```sh
+npm run test:device:smoke
+npm run test:device
+```
+
+`test:device:smoke` は短い接続・起動確認、`test:device` は実機テスト一式を実行します。レポートは `device-report\report.md` と `device-report\report.json` に保存され、画面キャプチャ PNG も `device-report\` 内に出力されます。実行ごとに前回レポートが更新されるため、必要な結果は次回実行前に退避してください。
+
+### 接続・実行時のトラブル
+
+- **adb が見つからない／端末が一覧に出ない:** Android SDK Platform-Tools をインストールし、その `platform-tools` ディレクトリを `PATH` に追加します。USB ケーブルをデータ通信対応のものに替え、端末の USB 接続モードと USB デバッグ設定を確認してから再接続します。`adb devices` で端末が表示されることを確認してください。
+- **`unauthorized` と表示される:** 端末のロックを解除し、表示された「USB デバッグを許可しますか？」で許可します。ダイアログが出ない場合は USB を抜き差しして再接続します。
+- **ポート競合:** 開発サーバー用ポートを別プロセスが使用しています。別のデバイステストや開発サーバーを終了してから再実行してください。使用中のプロセスが分からない場合は、OS のポート使用状況から該当プロセスを確認して終了します。
