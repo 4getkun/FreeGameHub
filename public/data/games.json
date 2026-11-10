@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-09T15:07:52.769Z",
+  "updatedAt": "2026-11-10T22:49:43.301Z",
   "games": [
     {
       "id": "epic:a9748abde1c94b66aae5250bb9fc5503",
@@ -50,6 +50,40 @@
       "worthUsd": null,
       "source": "epic",
       "descriptionOrig": "強力なユニットを戦略的に配置して、シナジーを得るローグライク・オートバトラー。\n目的は戦隊を率いて数々の敵に挑み、王国を解放すること。\n部隊の最適な組み合わせを見つけ、強力な魔法を編み出し、危険なモンスターと対決して、自軍を勝利に導こう！",
+      "summaryJa": null
+    },
+    {
+      "id": "gamerpower:3849",
+      "title": "Kettlebell: Inferno Hotel Afterimage Effect Key",
+      "titleEn": "Kettlebell: Inferno Hotel Afterimage Effect Key",
+      "store": "other",
+      "type": "dlc",
+      "url": "https://www.gamerpower.com/open/kettlebell-inferno-hotel-afterimage-effect-key-giveaway",
+      "imageUrl": "https://www.gamerpower.com/offers/1/6af362798d714.jpg",
+      "startAt": "2026-11-10T13:29:13.000Z",
+      "endAt": null,
+      "status": "active",
+      "endApprox": false,
+      "worthUsd": null,
+      "source": "gamerpower",
+      "descriptionOrig": "Claim your free Kettlebell: Inferno Hotel Afterimage Effect Key! Please note that this giveaway requires 10 ARP (Arena Reward Points) to claim a key.",
+      "summaryJa": null
+    },
+    {
+      "id": "gamerpower:3848",
+      "title": "RUNZ Playtest Steam Key",
+      "titleEn": "RUNZ Playtest Steam Key",
+      "store": "steam",
+      "type": "beta",
+      "url": "https://www.gamerpower.com/open/runz-playtest-steam-key-giveaway",
+      "imageUrl": "https://www.gamerpower.com/offers/1/6af35f1968895.jpg",
+      "startAt": "2026-11-10T13:14:49.000Z",
+      "endAt": "2026-11-17T23:59:00.000Z",
+      "status": "active",
+      "endApprox": true,
+      "worthUsd": null,
+      "source": "gamerpower",
+      "descriptionOrig": "Claim free RUNZ Playtest Steam Keys and join the playtest from November 10 to 17.",
       "summaryJa": null
     },
     {
