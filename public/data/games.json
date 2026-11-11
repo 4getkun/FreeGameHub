@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-10T22:49:43.301Z",
+  "updatedAt": "2026-11-11T04:39:00.069Z",
   "games": [
     {
       "id": "epic:a9748abde1c94b66aae5250bb9fc5503",
@@ -237,23 +237,6 @@
       "worthUsd": null,
       "source": "gamerpower",
       "descriptionOrig": "Claim your free Fathom Reach Playtest Steam Key and join the playtest!",
-      "summaryJa": null
-    },
-    {
-      "id": "gamerpower:3814",
-      "title": "Dungeons And Dragons Online: Bigby’s Better Gift Coupon Code",
-      "titleEn": "Dungeons And Dragons Online: Bigby’s Better Gift Coupon Code",
-      "store": "other",
-      "type": "dlc",
-      "url": "https://www.gamerpower.com/open/dungeons-and-dragons-online-bigby-s-better-gift-coupon-code",
-      "imageUrl": "https://www.gamerpower.com/offers/1/6acfc46e08a35.jpg",
-      "startAt": "2026-10-14T14:05:34.000Z",
-      "endAt": "2026-11-10T23:59:00.000Z",
-      "status": "active",
-      "endApprox": true,
-      "worthUsd": null,
-      "source": "gamerpower",
-      "descriptionOrig": "Dungeons And Dragons Online Bigby’s Better Gift code is available until November 10, for all players! The code unlocks content packs, adventure packs, new character types, and much more. Enter BIGBYISBETTER within the “redeem coupon” area of the DDO in-game store!\n\nCODE: BIGBYISBETTER",
       "summaryJa": null
     },
     {
@@ -1767,6 +1750,23 @@
       "worthUsd": null,
       "source": "gamerpower",
       "descriptionOrig": "Grab this Horsch Agrovation DLC Code for Farming Simulator 2017. On the Farming Simulator 2017 page, just paste the following key code into the field provided: 143208267411\r\n\r\nYou will receive a link to the Horsch Agrovation DLC released during Agritechnica event. It is a 1.1GB download that gives you a .exe file.",
+      "summaryJa": null
+    },
+    {
+      "id": "gamerpower:3814",
+      "title": "Dungeons And Dragons Online: Bigby’s Better Gift Coupon Code",
+      "titleEn": "Dungeons And Dragons Online: Bigby’s Better Gift Coupon Code",
+      "store": "other",
+      "type": "dlc",
+      "url": "https://www.gamerpower.com/open/dungeons-and-dragons-online-bigby-s-better-gift-coupon-code",
+      "imageUrl": "https://www.gamerpower.com/offers/1/6acfc46e08a35.jpg",
+      "startAt": "2026-10-14T14:05:34.000Z",
+      "endAt": "2026-11-10T23:59:00.000Z",
+      "status": "ended",
+      "endApprox": true,
+      "worthUsd": null,
+      "source": "gamerpower",
+      "descriptionOrig": "Dungeons And Dragons Online Bigby’s Better Gift code is available until November 10, for all players! The code unlocks content packs, adventure packs, new character types, and much more. Enter BIGBYISBETTER within the “redeem coupon” area of the DDO in-game store!\n\nCODE: BIGBYISBETTER",
       "summaryJa": null
     },
     {
