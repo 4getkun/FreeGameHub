@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-13T04:58:49.719Z",
+  "updatedAt": "2026-11-16T14:45:24.709Z",
   "games": [
     {
       "id": "epic:d37f3694e7a04edb8347f3cb6320f9d3",
@@ -16,6 +16,23 @@
       "worthUsd": null,
       "source": "epic",
       "descriptionOrig": "絶え間ない不安と死の危険の気配が迫る『Alien: Isolation』で真の恐怖を味わおう。   CATHODE™エンジンを使用して制作。",
+      "summaryJa": null
+    },
+    {
+      "id": "gamerpower:3851",
+      "title": "The Legend of California (Playtest) Steam Key",
+      "titleEn": "The Legend of California (Playtest) Steam Key",
+      "store": "steam",
+      "type": "beta",
+      "url": "https://www.gamerpower.com/open/the-legend-of-california-playtest-steam-key-giveaway",
+      "imageUrl": "https://www.gamerpower.com/offers/1/6af60c747ec99.jpg",
+      "startAt": "2026-11-12T13:59:00.000Z",
+      "endAt": "2026-11-18T23:59:00.000Z",
+      "status": "active",
+      "endApprox": true,
+      "worthUsd": null,
+      "source": "gamerpower",
+      "descriptionOrig": "Claim your free The Legend of California Closed Alpha Steam Key and join the closed alpha through November 18.",
       "summaryJa": null
     },
     {
@@ -50,23 +67,6 @@
       "worthUsd": 14.99,
       "source": "epic",
       "descriptionOrig": "強力なユニットを戦略的に配置して、シナジーを得るローグライク・オートバトラー。\n目的は戦隊を率いて数々の敵に挑み、王国を解放すること。\n部隊の最適な組み合わせを見つけ、強力な魔法を編み出し、危険なモンスターと対決して、自軍を勝利に導こう！",
-      "summaryJa": null
-    },
-    {
-      "id": "gamerpower:3851",
-      "title": "The Legend of California (Playtest) Steam Key",
-      "titleEn": "The Legend of California (Playtest) Steam Key",
-      "store": "steam",
-      "type": "beta",
-      "url": "https://www.gamerpower.com/open/the-legend-of-california-playtest-steam-key-giveaway",
-      "imageUrl": "https://www.gamerpower.com/offers/1/6af60c747ec99.jpg",
-      "startAt": "2026-11-12T13:59:00.000Z",
-      "endAt": "2026-11-18T23:59:00.000Z",
-      "status": "active",
-      "endApprox": true,
-      "worthUsd": null,
-      "source": "gamerpower",
-      "descriptionOrig": "Claim your free The Legend of California Closed Alpha Steam Key and join the closed alpha through November 18.",
       "summaryJa": null
     },
     {
