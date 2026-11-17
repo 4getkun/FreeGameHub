@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-16T14:45:24.709Z",
+  "updatedAt": "2026-11-17T15:28:44.225Z",
   "games": [
     {
       "id": "epic:d37f3694e7a04edb8347f3cb6320f9d3",
@@ -67,6 +67,23 @@
       "worthUsd": 14.99,
       "source": "epic",
       "descriptionOrig": "強力なユニットを戦略的に配置して、シナジーを得るローグライク・オートバトラー。\n目的は戦隊を率いて数々の敵に挑み、王国を解放すること。\n部隊の最適な組み合わせを見つけ、強力な魔法を編み出し、危険なモンスターと対決して、自軍を勝利に導こう！",
+      "summaryJa": null
+    },
+    {
+      "id": "gamerpower:3852",
+      "title": "Contractor: The Clean Up Part 2",
+      "titleEn": "Contractor: The Clean Up Part 2",
+      "store": "epic",
+      "type": "game",
+      "url": "https://www.gamerpower.com/open/contractor-the-clean-up-part-2-epic-games-giveaway",
+      "imageUrl": "https://www.gamerpower.com/offers/1/6afc554f06761.jpg",
+      "startAt": "2026-11-17T08:23:27.000Z",
+      "endAt": "2026-12-02T23:59:00.000Z",
+      "status": "active",
+      "endApprox": true,
+      "worthUsd": 4.99,
+      "source": "gamerpower",
+      "descriptionOrig": "Score Contractor: The Clean Up Part 2 for free via Epic Games Store! Take control of a powerful loader and clear construction sites filled with rubble, broken concrete, and debris.",
       "summaryJa": null
     },
     {
