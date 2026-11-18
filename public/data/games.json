@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-18T15:04:31.213Z",
+  "updatedAt": "2026-11-18T23:52:51.813Z",
   "games": [
     {
       "id": "epic:d37f3694e7a04edb8347f3cb6320f9d3",
@@ -121,23 +121,6 @@
       "summaryJa": null
     },
     {
-      "id": "gamerpower:3848",
-      "title": "RUNZ Playtest Steam Key",
-      "titleEn": "RUNZ Playtest Steam Key",
-      "store": "steam",
-      "type": "beta",
-      "url": "https://www.gamerpower.com/open/runz-playtest-steam-key-giveaway",
-      "imageUrl": "https://www.gamerpower.com/offers/1/6af35f1968895.jpg",
-      "startAt": "2026-11-10T13:14:49.000Z",
-      "endAt": "2026-11-17T23:59:00.000Z",
-      "status": "ended",
-      "endApprox": true,
-      "worthUsd": null,
-      "source": "gamerpower",
-      "descriptionOrig": "Claim free RUNZ Playtest Steam Keys and join the playtest from November 10 to 17.",
-      "summaryJa": null
-    },
-    {
       "id": "gamerpower:1546",
       "title": "Dead by Daylight 100k Bloodpoints Key",
       "titleEn": "Dead by Daylight 100k Bloodpoints Key",
@@ -169,23 +152,6 @@
       "worthUsd": 4.99,
       "source": "gamerpower",
       "descriptionOrig": "Score My Darkest Witch for free on IndieGala! My Darkest Witch is a 2d survival arena game with endless waves of enemies.",
-      "summaryJa": null
-    },
-    {
-      "id": "gamerpower:3831",
-      "title": "Hunting Simulator 3 - Classic American Hunter Pack",
-      "titleEn": "Hunting Simulator 3 - Classic American Hunter Pack",
-      "store": "steam",
-      "type": "dlc",
-      "url": "https://www.gamerpower.com/open/hunting-simulator-3-classic-american-hunter-pack-steam-giveaway",
-      "imageUrl": "https://www.gamerpower.com/offers/1/6ae34f8e4b036.jpg",
-      "startAt": "2026-10-29T09:52:14.000Z",
-      "endAt": "2026-11-12T23:59:00.000Z",
-      "status": "ended",
-      "endApprox": true,
-      "worthUsd": 4.99,
-      "source": "gamerpower",
-      "descriptionOrig": "Score Hunting Simulator 3 - Classic American Hunter Pack (DLC) for free on Steam! Please note the base game is required to enjoy this content DLC.",
       "summaryJa": null
     },
     {
@@ -1767,6 +1733,40 @@
       "worthUsd": null,
       "source": "gamerpower",
       "descriptionOrig": "Grab this Horsch Agrovation DLC Code for Farming Simulator 2017. On the Farming Simulator 2017 page, just paste the following key code into the field provided: 143208267411\r\n\r\nYou will receive a link to the Horsch Agrovation DLC released during Agritechnica event. It is a 1.1GB download that gives you a .exe file.",
+      "summaryJa": null
+    },
+    {
+      "id": "gamerpower:3848",
+      "title": "RUNZ Playtest Steam Key",
+      "titleEn": "RUNZ Playtest Steam Key",
+      "store": "steam",
+      "type": "beta",
+      "url": "https://www.gamerpower.com/open/runz-playtest-steam-key-giveaway",
+      "imageUrl": "https://www.gamerpower.com/offers/1/6af35f1968895.jpg",
+      "startAt": "2026-11-10T13:14:49.000Z",
+      "endAt": "2026-11-17T23:59:00.000Z",
+      "status": "ended",
+      "endApprox": true,
+      "worthUsd": null,
+      "source": "gamerpower",
+      "descriptionOrig": "Claim free RUNZ Playtest Steam Keys and join the playtest from November 10 to 17.",
+      "summaryJa": null
+    },
+    {
+      "id": "gamerpower:3831",
+      "title": "Hunting Simulator 3 - Classic American Hunter Pack",
+      "titleEn": "Hunting Simulator 3 - Classic American Hunter Pack",
+      "store": "steam",
+      "type": "dlc",
+      "url": "https://www.gamerpower.com/open/hunting-simulator-3-classic-american-hunter-pack-steam-giveaway",
+      "imageUrl": "https://www.gamerpower.com/offers/1/6ae34f8e4b036.jpg",
+      "startAt": "2026-10-29T09:52:14.000Z",
+      "endAt": "2026-11-12T23:59:00.000Z",
+      "status": "ended",
+      "endApprox": true,
+      "worthUsd": 4.99,
+      "source": "gamerpower",
+      "descriptionOrig": "Score Hunting Simulator 3 - Classic American Hunter Pack (DLC) for free on Steam! Please note the base game is required to enjoy this content DLC.",
       "summaryJa": null
     },
     {
