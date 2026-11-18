@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-18T00:30:11.499Z",
+  "updatedAt": "2026-11-18T15:04:31.213Z",
   "games": [
     {
       "id": "epic:d37f3694e7a04edb8347f3cb6320f9d3",
@@ -33,6 +33,23 @@
       "worthUsd": null,
       "source": "gamerpower",
       "descriptionOrig": "Claim your free The Legend of California Closed Alpha Steam Key and join the closed alpha through November 18.",
+      "summaryJa": null
+    },
+    {
+      "id": "epic:0623017cf9f341efbe07557f46beb4e8",
+      "title": "ファイアストン - 放置クリッカーオンラインRPG",
+      "titleEn": "Firestone – Idle Clicker Online RPG",
+      "store": "epic",
+      "type": "game",
+      "url": "https://store.epicgames.com/ja/p/firestone-online-idle-rpg-bfd04b",
+      "imageUrl": "https://cdn1.epicgames.com/spt-assets/69576a28f7154fe9a0dce97508da5163/firestone-online-idle-rpg-1nz5u.jpg",
+      "startAt": "2026-11-26T16:00:00.000Z",
+      "endAt": "2026-12-03T16:00:00.000Z",
+      "status": "upcoming",
+      "endApprox": false,
+      "worthUsd": null,
+      "source": "epic",
+      "descriptionOrig": "『Firestone: Online Idle RPG』は放置系RPGのマルチプレイファンタジーゲーム。ヒーロー🧙‍♂️を集め、装備やスキルを強化し、放置バトルに送り出すか、連続クリッカーで強いボスを倒しましょう！ギルドフレンドとチャットしたり、PvP対戦⚔️もできます。遊び方はあなた次第！",
       "summaryJa": null
     },
     {
