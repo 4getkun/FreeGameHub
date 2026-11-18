@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-17T15:28:44.225Z",
+  "updatedAt": "2026-11-18T00:30:11.499Z",
   "games": [
     {
       "id": "epic:d37f3694e7a04edb8347f3cb6320f9d3",
@@ -113,7 +113,7 @@
       "imageUrl": "https://www.gamerpower.com/offers/1/6af35f1968895.jpg",
       "startAt": "2026-11-10T13:14:49.000Z",
       "endAt": "2026-11-17T23:59:00.000Z",
-      "status": "active",
+      "status": "ended",
       "endApprox": true,
       "worthUsd": null,
       "source": "gamerpower",
