@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-18T23:52:51.813Z",
+  "updatedAt": "2026-11-19T05:51:04.916Z",
   "games": [
     {
       "id": "epic:d37f3694e7a04edb8347f3cb6320f9d3",
@@ -16,23 +16,6 @@
       "worthUsd": null,
       "source": "epic",
       "descriptionOrig": "絶え間ない不安と死の危険の気配が迫る『Alien: Isolation』で真の恐怖を味わおう。   CATHODE™エンジンを使用して制作。",
-      "summaryJa": null
-    },
-    {
-      "id": "gamerpower:3851",
-      "title": "The Legend of California (Playtest) Steam Key",
-      "titleEn": "The Legend of California (Playtest) Steam Key",
-      "store": "steam",
-      "type": "beta",
-      "url": "https://www.gamerpower.com/open/the-legend-of-california-playtest-steam-key-giveaway",
-      "imageUrl": "https://www.gamerpower.com/offers/1/6af60c747ec99.jpg",
-      "startAt": "2026-11-12T13:59:00.000Z",
-      "endAt": "2026-11-18T23:59:00.000Z",
-      "status": "active",
-      "endApprox": true,
-      "worthUsd": null,
-      "source": "gamerpower",
-      "descriptionOrig": "Claim your free The Legend of California Closed Alpha Steam Key and join the closed alpha through November 18.",
       "summaryJa": null
     },
     {
@@ -1733,6 +1716,23 @@
       "worthUsd": null,
       "source": "gamerpower",
       "descriptionOrig": "Grab this Horsch Agrovation DLC Code for Farming Simulator 2017. On the Farming Simulator 2017 page, just paste the following key code into the field provided: 143208267411\r\n\r\nYou will receive a link to the Horsch Agrovation DLC released during Agritechnica event. It is a 1.1GB download that gives you a .exe file.",
+      "summaryJa": null
+    },
+    {
+      "id": "gamerpower:3851",
+      "title": "The Legend of California (Playtest) Steam Key",
+      "titleEn": "The Legend of California (Playtest) Steam Key",
+      "store": "steam",
+      "type": "beta",
+      "url": "https://www.gamerpower.com/open/the-legend-of-california-playtest-steam-key-giveaway",
+      "imageUrl": "https://www.gamerpower.com/offers/1/6af60c747ec99.jpg",
+      "startAt": "2026-11-12T13:59:00.000Z",
+      "endAt": "2026-11-18T23:59:00.000Z",
+      "status": "ended",
+      "endApprox": true,
+      "worthUsd": null,
+      "source": "gamerpower",
+      "descriptionOrig": "Claim your free The Legend of California Closed Alpha Steam Key and join the closed alpha through November 18.",
       "summaryJa": null
     },
     {
